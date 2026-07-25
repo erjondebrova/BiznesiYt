@@ -34,7 +34,7 @@ create table if not exists conversations (
 
 create table if not exists messages (
   id uuid primary key default gen_random_uuid(),
-  conversation_id uuid references conversations not null on delete cascade,
+  conversation_id uuid references conversations(id) on delete cascade not null,
   role text not null check (role in ('user', 'assistant')),
   content text not null,
   created_at timestamptz default now()

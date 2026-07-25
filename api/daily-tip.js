@@ -51,8 +51,8 @@ Shkruaj vetëm këshillën, pa hyrje.`
     if (userId) {
       const { createClient } = await import('@supabase/supabase-js')
       const supabase = createClient(
-        process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_KEY || process.env.VITE_SUPABASE_ANON_KEY
+        process.env.VITE_SUPABASE_URL,
+        process.env.VITE_SUPABASE_ANON_KEY
       )
       const today = new Date().toISOString().split('T')[0]
       await supabase.from('daily_tips').insert({

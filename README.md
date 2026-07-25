@@ -15,15 +15,14 @@ cp .env.example .env
 Plotësoni vlerat:
 ```
 VITE_SUPABASE_URL=https://iwwezuucbplzwupcakrl.supabase.co
-VITE_SUPABASE_ANON_KEY=<your-anon-key>
+VITE_SUPABASE_ANON_KEY=sb_publishable_ja6Lz8NfRAXDpKl12ALDpg_HWgLY9Qd
 ANTHROPIC_API_KEY=<your-anthropic-key>
 ```
 
 ### 2. Supabase Database Setup
 
-Kopjoni përmbajtjen e `supabase/schema.sql` dhe ekzekutojeni në **Supabase SQL Editor**:
-- Hapni projektin në [supabase.com](https://supabase.com)
-- SQL Editor → New query → Paste schema → Run
+✅ **Skema është aplikuar tashmë** te projekti `Biznesi Yt` (`iwwezuucbplzwupcakrl`).
+Tabelat: `users_profile`, `conversations`, `messages`, `daily_tips` — të gjitha me RLS aktive.
 
 ### 3. Supabase Auth Setup
 
