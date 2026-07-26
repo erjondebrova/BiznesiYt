@@ -19,6 +19,10 @@ import MarketingPage from './pages/marketing/MarketingPage'
 import MarketingPlanPage from './pages/marketing/MarketingPlanPage'
 import ContentCreatorPage from './pages/marketing/ContentCreatorPage'
 import CompetitorPage from './pages/marketing/CompetitorPage'
+import CalendarPage from './pages/marketing/CalendarPage'
+import VideoScriptPage from './pages/marketing/VideoScriptPage'
+import EmailCampaignPage from './pages/marketing/EmailCampaignPage'
+import AdCampaignPage from './pages/marketing/AdCampaignPage'
 import FinancialPage from './pages/financial/FinancialPage'
 import LegalPage from './pages/legal/LegalPage'
 import GrowthPage from './pages/growth/GrowthPage'
@@ -73,6 +77,26 @@ function AppRoutes() {
       <Route path="/marketing/compete" element={
         <ProtectedRoute>
           <Layout><CompetitorPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/marketing/calendar" element={
+        <ProtectedRoute>
+          <Layout><CalendarPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/marketing/video" element={
+        <ProtectedRoute>
+          <Layout><VideoScriptPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/marketing/email" element={
+        <ProtectedRoute>
+          <Layout><EmailCampaignPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/marketing/ads" element={
+        <ProtectedRoute>
+          <Layout><AdCampaignPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/financial" element={
