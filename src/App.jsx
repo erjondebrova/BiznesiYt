@@ -2,7 +2,12 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import Layout from './components/Layout'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import AdminUsersPage from './pages/admin/AdminUsersPage'
+import AdminUserDetailPage from './pages/admin/AdminUserDetailPage'
 
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/auth/LoginPage'
@@ -104,6 +109,23 @@ function AppRoutes() {
         <ProtectedRoute>
           <Layout><SettingsPage /></Layout>
         </ProtectedRoute>
+      } />
+
+      {/* Admin panel */}
+      <Route path="/admin" element={
+        <AdminRoute>
+          <AdminLayout><AdminDashboardPage /></AdminLayout>
+        </AdminRoute>
+      } />
+      <Route path="/admin/users" element={
+        <AdminRoute>
+          <AdminLayout><AdminUsersPage /></AdminLayout>
+        </AdminRoute>
+      } />
+      <Route path="/admin/users/:id" element={
+        <AdminRoute>
+          <AdminLayout><AdminUserDetailPage /></AdminLayout>
+        </AdminRoute>
       } />
 
       {/* Catch all */}

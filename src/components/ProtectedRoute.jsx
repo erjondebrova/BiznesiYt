@@ -21,7 +21,8 @@ export default function ProtectedRoute({ children, skipOnboardingCheck = false }
 
   if (!user) return <Navigate to="/auth/login" replace />
 
-  if (!skipOnboardingCheck) {
+  // Admins skip onboarding entirely
+  if (!skipOnboardingCheck && !profile?.is_admin) {
     const onboardingDone = sessionStorage.getItem('onboarding_done') === '1'
     if (!onboardingDone && profile && !profile.onboarding_completed) {
       return <Navigate to="/onboarding" replace />

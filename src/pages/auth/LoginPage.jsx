@@ -18,9 +18,15 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) throw error
-      navigate('/dashboard')
+      // Check if admin and redirect accordingly
+      const { data: profileData } = await supabase
+        .from('users_profile')
+        .select('is_admin')
+        .eq('id', data.user.id)
+        .single()
+      navigate(profileData?.is_admin ? '/admin' : '/dashboard')
     } catch (err) {
       setError(err.message === 'Invalid login credentials'
         ? 'Email ose fjalëkalim i gabuar.'
