@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { Button } from '../components/ui/button'
@@ -40,8 +39,7 @@ const STEPS = [
 ]
 
 export default function OnboardingPage() {
-  const { user, refreshProfile } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState({
@@ -78,8 +76,7 @@ export default function OnboardingPage() {
         onboarding_completed: true,
         updated_at: new Date().toISOString(),
       })
-      await refreshProfile()
-      navigate('/dashboard')
+      window.location.href = '/dashboard'
     } catch (err) {
       console.error(err)
     } finally {
