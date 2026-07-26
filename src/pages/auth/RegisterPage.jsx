@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { supabase } from '../../lib/supabase'
+import { supabase, isConfigured } from '../../lib/supabase'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
@@ -13,6 +13,16 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false)
   const navigate = useNavigate()
 
+  function friendlyError(msg) {
+    if (!isConfigured || msg?.includes('fetch') || msg?.includes('network') || msg?.includes('Failed'))
+      return 'Problem lidhjeje me serverin. Provoni sërish pas pak sekondash.'
+    if (msg?.includes('already registered') || msg?.includes('already been registered'))
+      return 'Ky email është tashmë i regjistruar.'
+    if (msg?.includes('Invalid email')) return 'Email-i nuk është i vlefshëm.'
+    if (msg?.includes('Password')) return 'Fjalëkalimi duhet të ketë të paktën 6 karaktere.'
+    return msg || 'Ndodhi një gabim. Provoni sërish.'
+  }
+
   function handleChange(field) {
     return (e) => setForm(prev => ({ ...prev, [field]: e.target.value }))
   }
@@ -23,7 +33,7 @@ export default function RegisterPage() {
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/onboarding` }
     })
-    if (error) setError(error.message)
+    if (error) setError(friendlyError(error.message))
     setLoading(false)
   }
 
@@ -60,9 +70,7 @@ export default function RegisterPage() {
         setSuccess(true)
       }
     } catch (err) {
-      setError(err.message === 'User already registered'
-        ? 'Ky email është tashmë i regjistruar.'
-        : err.message)
+      setError(friendlyError(err.message))
     } finally {
       setLoading(false)
     }
