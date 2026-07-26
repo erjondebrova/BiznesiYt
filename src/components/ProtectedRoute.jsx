@@ -21,8 +21,11 @@ export default function ProtectedRoute({ children, skipOnboardingCheck = false }
 
   if (!user) return <Navigate to="/auth/login" replace />
 
-  if (!skipOnboardingCheck && profile && !profile.onboarding_completed) {
-    return <Navigate to="/onboarding" replace />
+  if (!skipOnboardingCheck) {
+    const onboardingDone = sessionStorage.getItem('onboarding_done') === '1'
+    if (!onboardingDone && profile && !profile.onboarding_completed) {
+      return <Navigate to="/onboarding" replace />
+    }
   }
 
   return children

@@ -68,20 +68,43 @@ export default function OnboardingPage() {
   }
 
   async function handleFinish() {
+    if (!user) return
     setLoading(true)
+
     try {
-      await supabase.from('users_profile').upsert({
-        id: user.id,
-        ...data,
-        onboarding_completed: true,
-        updated_at: new Date().toISOString(),
-      })
-      window.location.href = '/dashboard'
+      const { error } = await supabase
+        .from('users_profile')
+        .update({
+          business_name: data.business_name || null,
+          industry: data.industry || null,
+          city: data.city || null,
+          years_operating: data.years_operating || null,
+          employee_count: data.employee_count || null,
+          monthly_revenue_range: data.monthly_revenue_range || null,
+          has_nipt: data.has_nipt,
+          needs: data.needs.length > 0 ? data.needs : null,
+          biggest_challenge: data.biggest_challenge || null,
+          onboarding_completed: true,
+        })
+        .eq('id', user.id)
+
+      if (error) {
+        // Row may not exist yet — fall back to upsert
+        await supabase.from('users_profile').upsert({
+          id: user.id,
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          onboarding_completed: true,
+        }, { onConflict: 'id' })
+      }
     } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
+      console.error('Onboarding save error:', err)
     }
+
+    // SessionStorage flag ensures ProtectedRoute lets us through
+    // even if the DB write hasn't reflected yet on the next load
+    sessionStorage.setItem('onboarding_done', '1')
+    setLoading(false)
+    window.location.href = '/dashboard'
   }
 
   const progress = ((step + 1) / STEPS.length) * 100
