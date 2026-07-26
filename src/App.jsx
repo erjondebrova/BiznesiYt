@@ -24,6 +24,10 @@ import VideoScriptPage from './pages/marketing/VideoScriptPage'
 import EmailCampaignPage from './pages/marketing/EmailCampaignPage'
 import AdCampaignPage from './pages/marketing/AdCampaignPage'
 import FinancialPage from './pages/financial/FinancialPage'
+import PricingCalculatorPage from './pages/financial/PricingCalculatorPage'
+import CashFlowPage from './pages/financial/CashFlowPage'
+import ProjectionsPage from './pages/financial/ProjectionsPage'
+import BreakEvenPage from './pages/financial/BreakEvenPage'
 import LegalPage from './pages/legal/LegalPage'
 import GrowthPage from './pages/growth/GrowthPage'
 import SettingsPage from './pages/SettingsPage'
@@ -104,9 +108,24 @@ function AppRoutes() {
           <Layout><FinancialPage /></Layout>
         </ProtectedRoute>
       } />
-      <Route path="/financial/*" element={
+      <Route path="/financial/pricing" element={
         <ProtectedRoute>
-          <Layout><FinancialPage /></Layout>
+          <Layout><PricingCalculatorPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/financial/cashflow" element={
+        <ProtectedRoute>
+          <Layout><CashFlowPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/financial/projections" element={
+        <ProtectedRoute>
+          <Layout><ProjectionsPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/financial/breakeven" element={
+        <ProtectedRoute>
+          <Layout><BreakEvenPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/legal" element={
