@@ -5,12 +5,16 @@ import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
 import { ArrowLeft, Sparkles, Plus, X, RefreshCw, TrendingUp, AlertTriangle, Target } from 'lucide-react'
+import { usePlanLimits } from '../../hooks/usePlanLimits'
+import LimitReachedPopup from '../../components/LimitReachedPopup'
 
 export default function CompetitorPage() {
   const { profile } = useAuth()
+  const { checkLimit, incrementUsage } = usePlanLimits()
   const [competitors, setCompetitors] = useState(['', '', ''])
   const [analysis, setAnalysis] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [limitPopup, setLimitPopup] = useState(null)
 
   function updateCompetitor(i, val) {
     setCompetitors(prev => prev.map((c, idx) => idx === i ? val : c))
@@ -19,6 +23,13 @@ export default function CompetitorPage() {
   async function analyze() {
     const validComps = competitors.filter(c => c.trim())
     if (!validComps.length) return
+
+    const { allowed, used, limit } = checkLimit('competitor_analyses')
+    if (!allowed) {
+      setLimitPopup({ feature: 'competitor_analyses', used, limit })
+      return
+    }
+
     setLoading(true)
     setAnalysis(null)
 
@@ -76,6 +87,7 @@ Jepni përgjigje konkrete bazuar në industrinë dhe tregun shqiptar.`
           }
         }
         setAnalysis(fullText)
+        if (fullText) await incrementUsage('competitor_analyses')
       }
     } catch (err) {
       console.error(err)
@@ -116,6 +128,7 @@ Jepni përgjigje konkrete bazuar në industrinë dhe tregun shqiptar.`
 
   return (
     <div className="p-4 sm:p-6 max-w-3xl mx-auto">
+      {limitPopup && <LimitReachedPopup {...limitPopup} onClose={() => setLimitPopup(null)} />}
       <div className="flex items-center gap-2 mb-6">
         <Link to="/marketing" className="p-2 hover:bg-gray-100 rounded-lg">
           <ArrowLeft className="w-4 h-4" />

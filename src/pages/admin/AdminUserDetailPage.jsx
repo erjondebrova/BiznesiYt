@@ -3,10 +3,27 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import {
   ArrowLeft, Building2, MapPin, Users, Star, Calendar, Clock,
-  MessageSquare, Check, RefreshCw, ShieldCheck, Zap, Mail
+  MessageSquare, Check, RefreshCw, ShieldCheck, Zap, Mail,
+  BarChart2, Trash2, Settings
 } from 'lucide-react'
 
-const PLANS = ['free', 'pro', 'business', 'enterprise']
+const PLANS = ['free', 'starter', 'pro', 'business', 'enterprise', 'custom']
+
+const PLAN_DEFAULTS = {
+  free:       { ai_messages: 10,   marketing_plans: 1,   content_posts: 3,   competitor_analyses: 1   },
+  starter:    { ai_messages: 100,  marketing_plans: 5,   content_posts: 20,  competitor_analyses: 5   },
+  pro:        { ai_messages: 500,  marketing_plans: 20,  content_posts: 100, competitor_analyses: 20  },
+  business:   { ai_messages: 2000, marketing_plans: 100, content_posts: 500, competitor_analyses: null },
+  enterprise: { ai_messages: null, marketing_plans: null, content_posts: null, competitor_analyses: null },
+  custom:     null,
+}
+
+const FEATURE_LABELS = {
+  ai_messages:         'Mesazhe AI',
+  marketing_plans:     'Plane Marketingu',
+  content_posts:       'Postime Përmbajtjesh',
+  competitor_analyses: 'Analiza Konkurrence',
+}
 
 function InfoRow({ label, value }) {
   if (!value && value !== false) return null
@@ -20,10 +37,12 @@ function InfoRow({ label, value }) {
 
 function PlanBadge({ plan }) {
   const colors = {
-    free: 'bg-gray-100 text-gray-600 border-gray-200',
-    pro: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    business: 'bg-amber-50 text-amber-700 border-amber-200',
+    free:       'bg-gray-100 text-gray-600 border-gray-200',
+    starter:    'bg-sky-50 text-sky-700 border-sky-200',
+    pro:        'bg-indigo-50 text-indigo-700 border-indigo-200',
+    business:   'bg-amber-50 text-amber-700 border-amber-200',
     enterprise: 'bg-purple-50 text-purple-700 border-purple-200',
+    custom:     'bg-rose-50 text-rose-700 border-rose-200',
   }
   return (
     <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium border ${colors[plan] || colors.free}`}>
@@ -38,6 +57,30 @@ function daysSince(date) {
   return Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24))
 }
 
+function UsageBar({ feature, used, limit }) {
+  const label = FEATURE_LABELS[feature]
+  const isUnlimited = limit === null || limit === undefined
+  const pct = isUnlimited ? 0 : Math.min(100, Math.round(((used || 0) / limit) * 100))
+  const barColor = pct >= 100 ? 'bg-red-500' : pct >= 80 ? 'bg-amber-500' : 'bg-indigo-500'
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-xs text-gray-600">{label}</span>
+        <span className="text-xs font-medium text-gray-700">
+          {used || 0}{isUnlimited ? '' : ` / ${limit}`}
+          {isUnlimited && <span className="text-gray-400 ml-1">(pa limit)</span>}
+        </span>
+      </div>
+      {!isUnlimited && (
+        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${pct}%` }} />
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function AdminUserDetailPage() {
   const { id } = useParams()
   const [user, setUser] = useState(null)
@@ -48,6 +91,13 @@ export default function AdminUserDetailPage() {
   const [planNotes, setPlanNotes] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [resetting, setResetting] = useState(false)
+  const [resetDone, setResetDone] = useState(false)
+  const [customLimits, setCustomLimits] = useState({
+    ai_messages: '', marketing_plans: '', content_posts: '', competitor_analyses: ''
+  })
+  const [savingCustom, setSavingCustom] = useState(false)
+  const [savedCustom, setSavedCustom] = useState(false)
 
   async function loadData() {
     setLoading(true)
@@ -63,6 +113,14 @@ export default function AdminUserDetailPage() {
       setUser(found)
       setNewPlan(found.plan || 'free')
       setPlanNotes(found.plan_notes || '')
+      if (found.custom_limits) {
+        setCustomLimits({
+          ai_messages:         found.custom_limits.ai_messages         ?? '',
+          marketing_plans:     found.custom_limits.marketing_plans     ?? '',
+          content_posts:       found.custom_limits.content_posts       ?? '',
+          competitor_analyses: found.custom_limits.competitor_analyses ?? '',
+        })
+      }
       setConversations(convsRes.data || [])
     } catch (err) {
       setError('Gabim: ' + err.message)
@@ -92,6 +150,51 @@ export default function AdminUserDetailPage() {
     }
   }
 
+  async function resetUsage() {
+    if (!window.confirm('Jeni i sigurt që doni të zeroni të gjithë përdorimin?')) return
+    setResetting(true)
+    try {
+      const { error: err } = await supabase.rpc('admin_reset_user_usage', { target_id: id })
+      if (err) throw err
+      setUser(prev => ({ ...prev, usage_data: {} }))
+      setResetDone(true)
+      setTimeout(() => setResetDone(false), 3000)
+    } catch (err) {
+      alert('Gabim: ' + err.message)
+    } finally {
+      setResetting(false)
+    }
+  }
+
+  async function saveCustomLimits() {
+    setSavingCustom(true)
+    try {
+      const limits = {}
+      for (const key of ['ai_messages', 'marketing_plans', 'content_posts', 'competitor_analyses']) {
+        const v = customLimits[key]
+        limits[key] = v === '' || v === null ? null : parseInt(v, 10)
+      }
+      const { error: err } = await supabase.rpc('admin_set_custom_limits', {
+        target_id: id,
+        new_limits: limits,
+      })
+      if (err) throw err
+      setUser(prev => ({ ...prev, plan: 'custom', custom_limits: limits }))
+      setNewPlan('custom')
+      setSavedCustom(true)
+      setTimeout(() => setSavedCustom(false), 3000)
+    } catch (err) {
+      alert('Gabim: ' + err.message)
+    } finally {
+      setSavingCustom(false)
+    }
+  }
+
+  function getLimitsForPlan(planName) {
+    if (planName === 'custom') return user?.custom_limits || {}
+    return PLAN_DEFAULTS[planName] || PLAN_DEFAULTS.free
+  }
+
   const days = user?.last_sign_in_at ? daysSince(user.last_sign_in_at) : null
 
   if (loading) {
@@ -112,6 +215,9 @@ export default function AdminUserDetailPage() {
       </div>
     )
   }
+
+  const planLimits = getLimitsForPlan(user.plan)
+  const usageData = user.usage_data || {}
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -234,7 +340,47 @@ export default function AdminUserDetailPage() {
         </div>
       </div>
 
-      {/* Full profile details */}
+      {/* Usage section */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <BarChart2 className="w-4 h-4 text-indigo-500" />
+            Përdorimi i Funksioneve
+          </h3>
+          <button
+            onClick={resetUsage}
+            disabled={resetting}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              resetDone
+                ? 'bg-green-100 text-green-700'
+                : 'bg-red-50 text-red-600 hover:bg-red-100'
+            } disabled:opacity-60`}
+          >
+            {resetting ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : resetDone ? (
+              <><Check className="w-3.5 h-3.5" /> Zeruar!</>
+            ) : (
+              <><Trash2 className="w-3.5 h-3.5" /> Zero Përdorimin</>
+            )}
+          </button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {Object.keys(FEATURE_LABELS).map(feature => (
+            <UsageBar
+              key={feature}
+              feature={feature}
+              used={usageData[feature] || 0}
+              limit={planLimits?.[feature]}
+            />
+          ))}
+        </div>
+        <p className="text-xs text-gray-400 mt-3">
+          Përdorimi është kumulativ — nuk zerohet automatikisht. Vetëm admini mund ta zeroj manualisht.
+        </p>
+      </div>
+
+      {/* Full profile + plan management */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Profile detail */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
@@ -329,6 +475,51 @@ export default function AdminUserDetailPage() {
               </button>
             </div>
           </div>
+
+          {/* Custom limits editor */}
+          {newPlan === 'custom' && (
+            <div className="bg-white rounded-xl shadow-sm border border-rose-100 p-5">
+              <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                <Settings className="w-4 h-4 text-rose-500" />
+                Limitet e Personalizuara
+                <span className="text-xs text-gray-400 font-normal">(lëri bosh = pa limit)</span>
+              </h3>
+              <div className="space-y-3">
+                {Object.keys(FEATURE_LABELS).map(feature => (
+                  <div key={feature}>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      {FEATURE_LABELS[feature]}
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="Pa limit"
+                      value={customLimits[feature]}
+                      onChange={e => setCustomLimits(prev => ({ ...prev, [feature]: e.target.value }))}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white"
+                    />
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={saveCustomLimits}
+                disabled={savingCustom}
+                className={`w-full mt-4 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  savedCustom
+                    ? 'bg-green-500 text-white'
+                    : 'bg-rose-600 hover:bg-rose-700 text-white'
+                } disabled:opacity-60`}
+              >
+                {savingCustom ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : savedCustom ? (
+                  <><Check className="w-4 h-4" /> Ruajtur!</>
+                ) : (
+                  <><Settings className="w-4 h-4" /> Ruaj Limitet</>
+                )}
+              </button>
+            </div>
+          )}
 
           {/* All conversations */}
           {conversations.length > 0 && (

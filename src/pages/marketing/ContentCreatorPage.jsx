@@ -6,6 +6,8 @@ import { Textarea } from '../../components/ui/textarea'
 import { Label } from '../../components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 import { ArrowLeft, Sparkles, Copy, Check, RefreshCw } from 'lucide-react'
+import { usePlanLimits } from '../../hooks/usePlanLimits'
+import LimitReachedPopup from '../../components/LimitReachedPopup'
 
 const CHANNELS = [
   { value: 'instagram', label: '📸 Instagram', desc: 'Post ose Story' },
@@ -40,13 +42,22 @@ function ContentVariant({ variant, index }) {
 
 export default function ContentCreatorPage() {
   const { profile } = useAuth()
+  const { checkLimit, incrementUsage } = usePlanLimits()
   const [channel, setChannel] = useState('')
   const [promotion, setPromotion] = useState('')
   const [variants, setVariants] = useState([])
   const [loading, setLoading] = useState(false)
+  const [limitPopup, setLimitPopup] = useState(null)
 
   async function generate() {
     if (!channel || !promotion) return
+
+    const { allowed, used, limit } = checkLimit('content_posts')
+    if (!allowed) {
+      setLimitPopup({ feature: 'content_posts', used, limit })
+      return
+    }
+
     setLoading(true)
     setVariants([])
 
@@ -97,7 +108,9 @@ Formati: Shkruani direkt 3 variantet, të ndara me "---"`
           }
         }
         const parts = fullText.split('---').map(s => s.trim()).filter(Boolean)
-        setVariants(parts.slice(0, 3))
+        const finalVariants = parts.slice(0, 3)
+        setVariants(finalVariants)
+        if (finalVariants.length > 0) await incrementUsage('content_posts')
       }
     } catch (err) {
       console.error(err)
@@ -108,6 +121,7 @@ Formati: Shkruani direkt 3 variantet, të ndara me "---"`
 
   return (
     <div className="p-4 sm:p-6 max-w-3xl mx-auto">
+      {limitPopup && <LimitReachedPopup {...limitPopup} onClose={() => setLimitPopup(null)} />}
       <div className="flex items-center gap-2 mb-6">
         <Link to="/marketing" className="p-2 hover:bg-gray-100 rounded-lg">
           <ArrowLeft className="w-4 h-4" />

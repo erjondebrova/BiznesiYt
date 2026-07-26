@@ -9,6 +9,8 @@ import {
   Bot, User, Sparkles, ChevronLeft
 } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { usePlanLimits } from '../hooks/usePlanLimits'
+import LimitReachedPopup from '../components/LimitReachedPopup'
 
 const SUGGESTED_PROMPTS = [
   "Si mund të rris shitjet këtë muaj?",
@@ -88,6 +90,7 @@ export default function ChatPage() {
   const { id } = useParams()
   const { user, profile } = useAuth()
   const navigate = useNavigate()
+  const { checkLimit, incrementUsage } = usePlanLimits()
   const [conversations, setConversations] = useState([])
   const [currentConv, setCurrentConv] = useState(null)
   const [messages, setMessages] = useState([])
@@ -95,6 +98,7 @@ export default function ChatPage() {
   const [streaming, setStreaming] = useState(false)
   const [streamingText, setStreamingText] = useState('')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [limitPopup, setLimitPopup] = useState(null)
   const messagesEndRef = useRef(null)
   const textareaRef = useRef(null)
   const abortRef = useRef(null)
@@ -146,6 +150,12 @@ export default function ChatPage() {
 
   async function sendMessage() {
     if (!input.trim() || streaming) return
+
+    const { allowed, used, limit } = checkLimit('ai_messages')
+    if (!allowed) {
+      setLimitPopup({ feature: 'ai_messages', used, limit })
+      return
+    }
 
     const text = input.trim()
     setInput('')
@@ -216,6 +226,7 @@ export default function ChatPage() {
       const assistantMsg = { role: 'assistant', content: fullText, id: Date.now() + 1 }
       setMessages(prev => [...prev, assistantMsg])
       setStreamingText('')
+      if (fullText) await incrementUsage('ai_messages')
 
       await supabase.from('messages').insert({
         conversation_id: conv.id, role: 'assistant', content: fullText
@@ -286,6 +297,7 @@ export default function ChatPage() {
 
   return (
     <div className="h-full flex overflow-hidden">
+      {limitPopup && <LimitReachedPopup {...limitPopup} onClose={() => setLimitPopup(null)} />}
       {/* Desktop sidebar */}
       <div className="hidden md:flex w-60 lg:w-64 flex-col flex-shrink-0">
         <ConversationList />

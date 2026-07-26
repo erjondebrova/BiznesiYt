@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Input } from '../../components/ui/input'
 import { TrendingUp, ArrowLeft, Sparkles, Check, ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { usePlanLimits } from '../../hooks/usePlanLimits'
+import LimitReachedPopup from '../../components/LimitReachedPopup'
 
 const QUESTIONS = [
   { id: 'goal', label: 'Cili është qëllimi kryesor i marketingut tuaj?', type: 'select',
@@ -23,17 +25,24 @@ const QUESTIONS = [
 
 export default function MarketingPlanPage() {
   const { profile } = useAuth()
+  const { checkLimit, incrementUsage } = usePlanLimits()
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState({})
   const [plan, setPlan] = useState(null)
   const [loading, setLoading] = useState(false)
   const [checkedTasks, setCheckedTasks] = useState({})
+  const [limitPopup, setLimitPopup] = useState(null)
 
   function updateAnswer(id, val) {
     setAnswers(prev => ({ ...prev, [id]: val }))
   }
 
   async function generatePlan() {
+    const { allowed, used, limit } = checkLimit('marketing_plans')
+    if (!allowed) {
+      setLimitPopup({ feature: 'marketing_plans', used, limit })
+      return
+    }
     setLoading(true)
     try {
       const prompt = `Gjenero një plan marketingu 30-ditor për:
@@ -85,6 +94,7 @@ Jep detyra KONKRETE dhe VEPRUESE, jo gjenerike. Çdo javë 4-6 detyra.`
           }
         }
         setPlan(fullText)
+        if (fullText) await incrementUsage('marketing_plans')
       }
     } catch (err) {
       console.error(err)
@@ -133,6 +143,7 @@ Jep detyra KONKRETE dhe VEPRUESE, jo gjenerike. Çdo javë 4-6 detyra.`
   if (plan) {
     return (
       <div className="p-4 sm:p-6 max-w-3xl mx-auto">
+        {limitPopup && <LimitReachedPopup {...limitPopup} onClose={() => setLimitPopup(null)} />}
         <div className="flex items-center gap-2 mb-6">
           <button onClick={() => setPlan(null)} className="p-2 hover:bg-gray-100 rounded-lg">
             <ArrowLeft className="w-4 h-4" />
@@ -159,6 +170,7 @@ Jep detyra KONKRETE dhe VEPRUESE, jo gjenerike. Çdo javë 4-6 detyra.`
 
   return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+      {limitPopup && <LimitReachedPopup {...limitPopup} onClose={() => setLimitPopup(null)} />}
       <div className="flex items-center gap-2 mb-6">
         <Link to="/marketing" className="p-2 hover:bg-gray-100 rounded-lg">
           <ArrowLeft className="w-4 h-4" />
