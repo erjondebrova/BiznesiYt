@@ -10,7 +10,7 @@ import {
 const PLANS = ['free', 'starter', 'pro', 'business', 'enterprise', 'custom']
 
 const PLAN_DEFAULTS = {
-  free:       { ai_messages: 10,   marketing_plans: 1,   content_posts: 3,   competitor_analyses: 1   },
+  free:       { ai_messages: 20,   marketing_plans: 3,   content_posts: 10,  competitor_analyses: 1   },
   starter:    { ai_messages: 100,  marketing_plans: 5,   content_posts: 20,  competitor_analyses: 5   },
   pro:        { ai_messages: 500,  marketing_plans: 20,  content_posts: 100, competitor_analyses: 20  },
   business:   { ai_messages: 2000, marketing_plans: 100, content_posts: 500, competitor_analyses: null },
@@ -445,6 +445,33 @@ export default function AdminUserDetailPage() {
                     </option>
                   ))}
                 </select>
+
+                {/* Live limits preview for the selected plan */}
+                {newPlan !== 'custom' && PLAN_DEFAULTS[newPlan] && (
+                  <div className="mt-2 bg-indigo-50 border border-indigo-100 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-indigo-700 mb-2 uppercase tracking-wide">
+                      Limitet — {newPlan.charAt(0).toUpperCase() + newPlan.slice(1)}
+                    </p>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                      {Object.keys(FEATURE_LABELS).map(feature => {
+                        const lim = PLAN_DEFAULTS[newPlan]?.[feature]
+                        return (
+                          <div key={feature} className="flex justify-between items-center">
+                            <span className="text-xs text-indigo-500">{FEATURE_LABELS[feature]}</span>
+                            <span className="text-xs font-bold text-indigo-800">
+                              {lim === null || lim === undefined ? '∞' : lim}
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
+                {newPlan === 'custom' && (
+                  <p className="mt-2 text-xs text-rose-500 italic">
+                    Vendos limitet manuale në seksionin e mëposhtëm.
+                  </p>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Shënime (opsionale)</label>
