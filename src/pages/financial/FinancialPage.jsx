@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { BarChart3, Calculator, TrendingUp, Target, ArrowRight } from 'lucide-react'
+import { BarChart3, Calculator, TrendingUp, Target, Receipt, Users, FileText, PieChart, ArrowRight } from 'lucide-react'
 
 const sections = [
   {
     icon: Calculator,
     title: 'Llogaritës Çmimesh',
-    desc: 'Fut koston dhe marzhin e dëshiruar — merr çmimin optimal, pozicionimin dhe këshilla çmimesh psikologjike.',
+    desc: 'Fut koston dhe marzhin — merr çmimin optimal, pozicionimin dhe këshilla çmimesh psikologjike.',
     href: '/financial/pricing',
     color: 'text-blue-500',
     bg: 'bg-blue-50',
@@ -15,7 +15,7 @@ const sections = [
   {
     icon: BarChart3,
     title: 'Pasqyrë Financiare',
-    desc: 'Regjistro të ardhurat dhe shpenzimet mujore — merr pasqyrën e qartë dhe analiza AI me rekomandime konkrete.',
+    desc: 'Regjistro të ardhurat dhe shpenzimet mujore — merr pasqyrën dhe analiza AI me rekomandime.',
     href: '/financial/cashflow',
     color: 'text-emerald-500',
     bg: 'bg-emerald-50',
@@ -24,7 +24,7 @@ const sections = [
   {
     icon: TrendingUp,
     title: 'Projeksione 6-Mujore',
-    desc: 'Bazuar në historikun tuaj, AI gjeneron skenarë optimistë, realistë dhe pesimistë për 6 muajt e ardhshëm.',
+    desc: 'Bazuar në historikun tuaj, AI gjeneron skenarë optimistë, realistë dhe pesimistë.',
     href: '/financial/projections',
     color: 'text-violet-500',
     bg: 'bg-violet-50',
@@ -33,11 +33,51 @@ const sections = [
   {
     icon: Target,
     title: 'Analiza Break-Even',
-    desc: 'Sa njësi duhet të shesësh çdo muaj për të mbuluar kostot? Gjej pikën e ekuilibrit dhe si ta ulësh.',
+    desc: 'Sa njësi duhet të shesësh çdo muaj për të mbuluar kostot? Gjej pikën e ekuilibrit.',
     href: '/financial/breakeven',
     color: 'text-rose-500',
     bg: 'bg-rose-50',
     cta: 'Analizoni Break-Even',
+  },
+  {
+    icon: Receipt,
+    title: 'Llogaritës TVSH',
+    desc: 'Konverto çmimet me/pa TVSH 20%, llogarit deklarimin tremujor dhe shiko regjimin fiskal.',
+    href: '/financial/vat',
+    color: 'text-teal-500',
+    bg: 'bg-teal-50',
+    cta: 'Llogarit TVSH',
+    badge: 'Ri',
+  },
+  {
+    icon: Users,
+    title: 'Llogaritës Pagash',
+    desc: 'Bruto → Neto automatikisht. Sigurime shoqërore, shëndetësore dhe tatimi mbi të ardhurat.',
+    href: '/financial/payroll',
+    color: 'text-indigo-500',
+    bg: 'bg-indigo-50',
+    cta: 'Llogarit Pagat',
+    badge: 'Ri',
+  },
+  {
+    icon: FileText,
+    title: 'Gjenerues Faturash',
+    desc: 'Krijo fatura profesionale me TVSH, klient dhe artikuj — të gatshme për printim ose PDF.',
+    href: '/financial/invoice',
+    color: 'text-amber-500',
+    bg: 'bg-amber-50',
+    cta: 'Krijo Faturë',
+    badge: 'Ri',
+  },
+  {
+    icon: PieChart,
+    title: 'Analiza ROI',
+    desc: 'Investo X, merr Y çdo muaj — llogarit kthimin, break-even kohor dhe merr verdiktin AI.',
+    href: '/financial/roi',
+    color: 'text-orange-500',
+    bg: 'bg-orange-50',
+    cta: 'Analizoni ROI',
+    badge: 'Ri',
   },
 ]
 
@@ -56,10 +96,15 @@ export default function FinancialPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {sections.map(s => (
           <Link key={s.href} to={s.href} className="block">
-            <div className="card-hover flex flex-col gap-4 h-full">
+            <div className="card-hover flex flex-col gap-4 h-full relative overflow-hidden">
+              {s.badge && (
+                <span className="absolute top-3 right-3 text-[10px] font-bold bg-primary-500 text-white px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                  {s.badge}
+                </span>
+              )}
               <div className={`w-12 h-12 ${s.bg} rounded-xl flex items-center justify-center`}>
                 <s.icon className={`w-6 h-6 ${s.color}`} />
               </div>

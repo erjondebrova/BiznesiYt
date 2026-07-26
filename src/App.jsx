@@ -28,6 +28,10 @@ import PricingCalculatorPage from './pages/financial/PricingCalculatorPage'
 import CashFlowPage from './pages/financial/CashFlowPage'
 import ProjectionsPage from './pages/financial/ProjectionsPage'
 import BreakEvenPage from './pages/financial/BreakEvenPage'
+import VATCalculatorPage from './pages/financial/VATCalculatorPage'
+import PayrollCalculatorPage from './pages/financial/PayrollCalculatorPage'
+import InvoiceGeneratorPage from './pages/financial/InvoiceGeneratorPage'
+import ROICalculatorPage from './pages/financial/ROICalculatorPage'
 import LegalPage from './pages/legal/LegalPage'
 import GrowthPage from './pages/growth/GrowthPage'
 import SettingsPage from './pages/SettingsPage'
@@ -126,6 +130,26 @@ function AppRoutes() {
       <Route path="/financial/breakeven" element={
         <ProtectedRoute>
           <Layout><BreakEvenPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/financial/vat" element={
+        <ProtectedRoute>
+          <Layout><VATCalculatorPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/financial/payroll" element={
+        <ProtectedRoute>
+          <Layout><PayrollCalculatorPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/financial/invoice" element={
+        <ProtectedRoute>
+          <Layout><InvoiceGeneratorPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/financial/roi" element={
+        <ProtectedRoute>
+          <Layout><ROICalculatorPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/legal" element={
