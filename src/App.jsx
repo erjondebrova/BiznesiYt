@@ -33,6 +33,10 @@ import PayrollCalculatorPage from './pages/financial/PayrollCalculatorPage'
 import InvoiceGeneratorPage from './pages/financial/InvoiceGeneratorPage'
 import ROICalculatorPage from './pages/financial/ROICalculatorPage'
 import LegalPage from './pages/legal/LegalPage'
+import LegalAdvisorPage from './pages/legal/LegalAdvisorPage'
+import DocumentTemplatesPage from './pages/legal/DocumentTemplatesPage'
+import FiscalCalendarPage from './pages/legal/FiscalCalendarPage'
+import NIPTGuidePage from './pages/legal/NIPTGuidePage'
 import GrowthPage from './pages/growth/GrowthPage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -157,9 +161,24 @@ function AppRoutes() {
           <Layout><LegalPage /></Layout>
         </ProtectedRoute>
       } />
-      <Route path="/legal/*" element={
+      <Route path="/legal/advisor" element={
         <ProtectedRoute>
-          <Layout><LegalPage /></Layout>
+          <Layout><LegalAdvisorPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/legal/documents" element={
+        <ProtectedRoute>
+          <Layout><DocumentTemplatesPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/legal/calendar" element={
+        <ProtectedRoute>
+          <Layout><FiscalCalendarPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/legal/nipt" element={
+        <ProtectedRoute>
+          <Layout><NIPTGuidePage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/growth" element={
