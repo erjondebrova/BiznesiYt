@@ -121,8 +121,50 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
 
+  const [showPassForm, setShowPassForm] = useState(false)
+  const [passForm, setPassForm] = useState({ current: '', next: '', confirm: '' })
+  const [passError, setPassError] = useState('')
+  const [passSaving, setPassSaving] = useState(false)
+  const [passSaved, setPassSaved] = useState(false)
+
   function update(field, val) {
     setForm(prev => ({ ...prev, [field]: val }))
+  }
+
+  function updatePass(field, val) {
+    setPassForm(prev => ({ ...prev, [field]: val }))
+  }
+
+  function closePassForm() {
+    setShowPassForm(false)
+    setPassForm({ current: '', next: '', confirm: '' })
+    setPassError('')
+  }
+
+  async function changePassword() {
+    setPassError('')
+    if (!passForm.current) return setPassError('Shkruaj fjalëkalimin aktual.')
+    if (passForm.next.length < 6) return setPassError('Fjalëkalimi i ri duhet të ketë të paktën 6 karaktere.')
+    if (passForm.next !== passForm.confirm) return setPassError('Fjalëkalimet nuk përputhen.')
+
+    setPassSaving(true)
+    try {
+      const { error: authErr } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: passForm.current,
+      })
+      if (authErr) { setPassError('Fjalëkalimi aktual është i gabuar.'); return }
+
+      const { error: updateErr } = await supabase.auth.updateUser({ password: passForm.next })
+      if (updateErr) throw updateErr
+
+      setPassSaved(true)
+      setTimeout(() => { setPassSaved(false); closePassForm() }, 2500)
+    } catch (err) {
+      setPassError(err.message)
+    } finally {
+      setPassSaving(false)
+    }
   }
 
   async function save() {
@@ -301,13 +343,52 @@ export default function SettingsPage() {
       {/* ── Account ── */}
       <div className="card space-y-1">
         <SectionHeader icon={Shield} title="Llogaria" desc="Siguria dhe aksesi"/>
-        <button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors group">
-          <div className="flex items-center gap-3">
-            <Lock className="w-4 h-4 text-gray-400"/>
-            <span className="text-sm text-gray-700">Ndrysho fjalëkalimin</span>
+        {showPassForm ? (
+          <div className="p-3 space-y-3 bg-gray-50 rounded-xl border border-gray-100">
+            <div>
+              <Label className="text-xs text-gray-500">Fjalëkalimi Aktual</Label>
+              <Input type="password" value={passForm.current} onChange={e => updatePass('current', e.target.value)}
+                className="mt-1 h-9 text-sm" placeholder="••••••••" autoFocus/>
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Fjalëkalimi i Ri</Label>
+              <Input type="password" value={passForm.next} onChange={e => updatePass('next', e.target.value)}
+                className="mt-1 h-9 text-sm" placeholder="Minimum 6 karaktere"/>
+            </div>
+            <div>
+              <Label className="text-xs text-gray-500">Konfirmo Fjalëkalimin e Ri</Label>
+              <Input type="password" value={passForm.confirm} onChange={e => updatePass('confirm', e.target.value)}
+                className="mt-1 h-9 text-sm" placeholder="••••••••"
+                onKeyDown={e => e.key === 'Enter' && changePassword()}/>
+            </div>
+            {passError && (
+              <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg p-2.5">
+                <AlertCircle className="w-3.5 h-3.5 flex-shrink-0"/>{passError}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Button onClick={changePassword}
+                disabled={passSaving || !passForm.current || !passForm.next || !passForm.confirm}
+                size="sm" className="flex-1 h-9 text-xs gap-1.5">
+                {passSaved
+                  ? <><Check className="w-3.5 h-3.5"/>Ndryshuar me sukses!</>
+                  : passSaving ? 'Duke ndryshuar...' : <><Lock className="w-3.5 h-3.5"/>Ndrysho Fjalëkalimin</>}
+              </Button>
+              <Button onClick={closePassForm} variant="outline" size="sm" className="h-9 text-xs px-4">
+                Anulo
+              </Button>
+            </div>
           </div>
-          <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500"/>
-        </button>
+        ) : (
+          <button onClick={() => setShowPassForm(true)}
+            className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors group">
+            <div className="flex items-center gap-3">
+              <Lock className="w-4 h-4 text-gray-400"/>
+              <span className="text-sm text-gray-700">Ndrysho fjalëkalimin</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500"/>
+          </button>
+        )}
         <button onClick={signOut}
           className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 transition-colors text-left group">
           <LogOut className="w-4 h-4 text-gray-400 group-hover:text-red-500"/>
