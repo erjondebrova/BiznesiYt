@@ -43,6 +43,7 @@ import FiscalCalendarPage from './pages/legal/FiscalCalendarPage'
 import NIPTGuidePage from './pages/legal/NIPTGuidePage'
 import EmploymentGuidePage from './pages/legal/EmploymentGuidePage'
 import GrowthPage from './pages/growth/GrowthPage'
+import RaportePage from './pages/RaportePage'
 import SettingsPage from './pages/SettingsPage'
 
 function AppRoutes() {
@@ -214,6 +215,11 @@ function AppRoutes() {
       <Route path="/growth/kpi" element={
         <ProtectedRoute>
           <Layout><KPIDashboardPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/raporte" element={
+        <ProtectedRoute>
+          <Layout><RaportePage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/settings" element={

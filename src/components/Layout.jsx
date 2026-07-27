@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import {
   LayoutDashboard, MessageSquare, TrendingUp, BarChart3, Scale,
-  Rocket, Settings, LogOut, Zap, Menu, X, ChevronRight, Bell
+  Rocket, Settings, LogOut, Zap, Menu, X, ChevronRight, Bell, BarChart2
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 
@@ -15,6 +15,7 @@ const navItems = [
   { icon: BarChart3, label: 'Financiar', href: '/financial' },
   { icon: Scale, label: 'Ligjore & Fiskal', href: '/legal' },
   { icon: Rocket, label: 'Rritje', href: '/growth' },
+  { icon: BarChart2, label: 'Raporte', href: '/raporte' },
   { type: 'separator' },
   { icon: Settings, label: 'Cilësimet', href: '/settings' },
 ]
