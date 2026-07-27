@@ -43,6 +43,11 @@ import FiscalCalendarPage from './pages/legal/FiscalCalendarPage'
 import NIPTGuidePage from './pages/legal/NIPTGuidePage'
 import EmploymentGuidePage from './pages/legal/EmploymentGuidePage'
 import GrowthPage from './pages/growth/GrowthPage'
+import HRPage from './pages/hr/HRPage'
+import JobDescriptionPage from './pages/hr/JobDescriptionPage'
+import InterviewQuestionsPage from './pages/hr/InterviewQuestionsPage'
+import OnboardingPlanPage from './pages/hr/OnboardingPlanPage'
+import PerformanceReviewPage from './pages/hr/PerformanceReviewPage'
 import RaportePage from './pages/RaportePage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -215,6 +220,31 @@ function AppRoutes() {
       <Route path="/growth/kpi" element={
         <ProtectedRoute>
           <Layout><KPIDashboardPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr" element={
+        <ProtectedRoute>
+          <Layout><HRPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/job" element={
+        <ProtectedRoute>
+          <Layout><JobDescriptionPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/interview" element={
+        <ProtectedRoute>
+          <Layout><InterviewQuestionsPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/onboarding" element={
+        <ProtectedRoute>
+          <Layout><OnboardingPlanPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/review" element={
+        <ProtectedRoute>
+          <Layout><PerformanceReviewPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/raporte" element={
