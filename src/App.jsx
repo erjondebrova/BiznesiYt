@@ -37,6 +37,7 @@ import LegalAdvisorPage from './pages/legal/LegalAdvisorPage'
 import DocumentTemplatesPage from './pages/legal/DocumentTemplatesPage'
 import FiscalCalendarPage from './pages/legal/FiscalCalendarPage'
 import NIPTGuidePage from './pages/legal/NIPTGuidePage'
+import EmploymentGuidePage from './pages/legal/EmploymentGuidePage'
 import GrowthPage from './pages/growth/GrowthPage'
 import SettingsPage from './pages/SettingsPage'
 
@@ -179,6 +180,11 @@ function AppRoutes() {
       <Route path="/legal/nipt" element={
         <ProtectedRoute>
           <Layout><NIPTGuidePage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/legal/employment" element={
+        <ProtectedRoute>
+          <Layout><EmploymentGuidePage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/growth" element={

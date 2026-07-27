@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Scale, MessageSquare, FileText, Calendar, BookOpen, ArrowRight } from 'lucide-react'
+import { Scale, MessageSquare, FileText, Calendar, BookOpen, Users, ArrowRight } from 'lucide-react'
 
 const sections = [
   {
@@ -39,6 +39,16 @@ const sections = [
     bg: 'bg-orange-50',
     cta: 'Hap Guidën',
   },
+  {
+    icon: Users,
+    title: 'Guidë Punësimi',
+    desc: 'Llojet e kontratave, hapat për të punësuar, të drejtat e punonjësve dhe procedura e largimit.',
+    href: '/legal/employment',
+    color: 'text-indigo-500',
+    bg: 'bg-indigo-50',
+    cta: 'Hap Guidën',
+    isNew: true,
+  },
 ]
 
 export default function LegalPage() {
@@ -58,7 +68,10 @@ export default function LegalPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {sections.map(s => (
-          <Link key={s.href} to={s.href} className="block">
+          <Link key={s.href} to={s.href} className="block relative">
+            {s.isNew && (
+              <span className="absolute top-3 right-3 z-10 text-[10px] font-bold bg-indigo-500 text-white px-1.5 py-0.5 rounded-full">Ri</span>
+            )}
             <div className="card-hover flex flex-col gap-4 h-full">
               <div className={`w-12 h-12 ${s.bg} rounded-xl flex items-center justify-center`}>
                 <s.icon className={`w-6 h-6 ${s.color}`} />
