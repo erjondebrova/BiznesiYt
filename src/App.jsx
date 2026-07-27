@@ -32,6 +32,10 @@ import VATCalculatorPage from './pages/financial/VATCalculatorPage'
 import PayrollCalculatorPage from './pages/financial/PayrollCalculatorPage'
 import InvoiceGeneratorPage from './pages/financial/InvoiceGeneratorPage'
 import ROICalculatorPage from './pages/financial/ROICalculatorPage'
+import BusinessDiagnosticPage from './pages/growth/BusinessDiagnosticPage'
+import GrowthPlanPage from './pages/growth/GrowthPlanPage'
+import FundingPage from './pages/growth/FundingPage'
+import KPIDashboardPage from './pages/growth/KPIDashboardPage'
 import LegalPage from './pages/legal/LegalPage'
 import LegalAdvisorPage from './pages/legal/LegalAdvisorPage'
 import DocumentTemplatesPage from './pages/legal/DocumentTemplatesPage'
@@ -192,9 +196,24 @@ function AppRoutes() {
           <Layout><GrowthPage /></Layout>
         </ProtectedRoute>
       } />
-      <Route path="/growth/*" element={
+      <Route path="/growth/diagnostic" element={
         <ProtectedRoute>
-          <Layout><GrowthPage /></Layout>
+          <Layout><BusinessDiagnosticPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/plan" element={
+        <ProtectedRoute>
+          <Layout><GrowthPlanPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/funding" element={
+        <ProtectedRoute>
+          <Layout><FundingPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/kpi" element={
+        <ProtectedRoute>
+          <Layout><KPIDashboardPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/settings" element={
