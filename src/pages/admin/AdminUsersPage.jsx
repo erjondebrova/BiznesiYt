@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import {
-  Search, RefreshCw, ChevronUp, ChevronDown, ExternalLink, Check
+  Search, RefreshCw, ChevronUp, ChevronDown, ExternalLink, Check, Trash2
 } from 'lucide-react'
 
 const PLANS = ['free', 'pro', 'business', 'enterprise']
@@ -44,6 +44,8 @@ export default function AdminUsersPage() {
   const [sortDir, setSortDir] = useState('desc')
   const [planChanging, setPlanChanging] = useState({})
   const [planSuccess, setPlanSuccess] = useState({})
+  const [deleteConfirm, setDeleteConfirm] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   async function loadUsers() {
     setLoading(true)
@@ -60,6 +62,20 @@ export default function AdminUsersPage() {
   }
 
   useEffect(() => { loadUsers() }, [])
+
+  async function deleteUser(userId) {
+    setDeleting(true)
+    try {
+      const { error: err } = await supabase.rpc('admin_delete_user', { target_id: userId })
+      if (err) throw err
+      setUsers(prev => prev.filter(u => u.id !== userId))
+      setDeleteConfirm(null)
+    } catch (err) {
+      alert('Gabim gjatë fshirjes: ' + err.message)
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   async function changePlan(userId, newPlan) {
     setPlanChanging(prev => ({ ...prev, [userId]: true }))
@@ -258,12 +274,20 @@ export default function AdminUsersPage() {
                     </select>
                   </td>
                   <td className="px-4 py-3">
-                    <Link
-                      to={`/admin/users/${u.id}`}
-                      className="p-1.5 rounded-lg hover:bg-indigo-50 text-gray-400 hover:text-indigo-600 transition-colors inline-flex"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                    </Link>
+                    <div className="flex items-center gap-1">
+                      <Link
+                        to={`/admin/users/${u.id}`}
+                        className="p-1.5 rounded-lg hover:bg-indigo-50 text-gray-400 hover:text-indigo-600 transition-colors inline-flex"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                      <button
+                        onClick={() => setDeleteConfirm(u)}
+                        className="p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -277,6 +301,38 @@ export default function AdminUsersPage() {
           </div>
         )}
       </div>
+
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center mb-4 mx-auto">
+              <Trash2 className="w-6 h-6 text-red-500" />
+            </div>
+            <h3 className="font-bold text-gray-900 text-center mb-1">Fshi Përdoruesin?</h3>
+            <p className="text-sm text-gray-500 text-center mb-1">
+              <strong>{deleteConfirm.full_name || deleteConfirm.email}</strong>
+            </p>
+            <p className="text-xs text-gray-400 text-center mb-5">
+              Ky veprim është i pakthyeshëm. Të gjitha të dhënat do të fshihen.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                Anulo
+              </button>
+              <button
+                onClick={() => deleteUser(deleteConfirm.id)}
+                disabled={deleting}
+                className="flex-1 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-medium disabled:opacity-60"
+              >
+                {deleting ? 'Duke fshirë...' : 'Fshi'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

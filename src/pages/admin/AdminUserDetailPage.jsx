@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import {
   ArrowLeft, Building2, MapPin, Users, Star, Calendar, Clock,
   MessageSquare, Check, RefreshCw, ShieldCheck, Zap, Mail,
-  BarChart2, Trash2, Settings
+  BarChart2, Trash2, Settings, AlertTriangle
 } from 'lucide-react'
 
 const PLANS = ['free', 'starter', 'pro', 'business', 'enterprise', 'custom']
@@ -83,6 +83,7 @@ function UsageBar({ feature, used, limit }) {
 
 export default function AdminUserDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [conversations, setConversations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -93,6 +94,8 @@ export default function AdminUserDetailPage() {
   const [saved, setSaved] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [resetDone, setResetDone] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [customLimits, setCustomLimits] = useState({
     ai_messages: '', marketing_plans: '', content_posts: '', competitor_analyses: ''
   })
@@ -190,6 +193,18 @@ export default function AdminUserDetailPage() {
     }
   }
 
+  async function deleteUser() {
+    setDeleting(true)
+    try {
+      const { error: err } = await supabase.rpc('admin_delete_user', { target_id: id })
+      if (err) throw err
+      navigate('/admin/users')
+    } catch (err) {
+      alert('Gabim gjatë fshirjes: ' + err.message)
+      setDeleting(false)
+    }
+  }
+
   function getLimitsForPlan(planName) {
     if (planName === 'custom') return user?.custom_limits || {}
     return PLAN_DEFAULTS[planName] || PLAN_DEFAULTS.free
@@ -241,8 +256,15 @@ export default function AdminUserDetailPage() {
                 {user.email}
               </div>
             </div>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
               <PlanBadge plan={user.plan} />
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 border border-red-200 hover:bg-red-50 transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                Fshi
+              </button>
             </div>
           </div>
         </div>
@@ -576,6 +598,36 @@ export default function AdminUserDetailPage() {
           )}
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center mb-4 mx-auto">
+              <AlertTriangle className="w-6 h-6 text-red-500" />
+            </div>
+            <h3 className="font-bold text-gray-900 text-center mb-1">Fshi Përdoruesin?</h3>
+            <p className="text-sm text-gray-700 text-center font-medium mb-1">{user.full_name || user.email}</p>
+            <p className="text-xs text-gray-400 text-center mb-5">
+              Ky veprim është i pakthyeshëm. Llogaria dhe të gjitha të dhënat do të fshihen përgjithmonë.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                Anulo
+              </button>
+              <button
+                onClick={deleteUser}
+                disabled={deleting}
+                className="flex-1 px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-medium disabled:opacity-60"
+              >
+                {deleting ? 'Duke fshirë...' : 'Fshi Llogarinë'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
