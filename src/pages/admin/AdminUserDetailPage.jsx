@@ -4,8 +4,18 @@ import { supabase } from '../../lib/supabase'
 import {
   ArrowLeft, Building2, MapPin, Users, Star, Calendar, Clock,
   MessageSquare, Check, RefreshCw, ShieldCheck, Zap, Mail,
-  BarChart2, Trash2, Settings, AlertTriangle
+  BarChart2, Trash2, Settings, AlertTriangle, Target, Scale, Briefcase, FileText, TrendingUp, Phone
 } from 'lucide-react'
+
+const MODULE_META = {
+  chat:      { label: 'Asistent AI',      icon: MessageSquare, color: 'bg-indigo-500' },
+  marketing: { label: 'Marketingu',        icon: Target,        color: 'bg-pink-500'   },
+  financial: { label: 'Financat',          icon: BarChart2,     color: 'bg-emerald-500'},
+  legal:     { label: 'Ligjore',           icon: Scale,         color: 'bg-violet-500' },
+  growth:    { label: 'Rritja',            icon: TrendingUp,    color: 'bg-orange-500' },
+  hr:        { label: 'Burimet Njerëzore', icon: Briefcase,     color: 'bg-cyan-500'   },
+  raporte:   { label: 'Raporte',           icon: FileText,      color: 'bg-slate-500'  },
+}
 
 const PLANS = ['free', 'starter', 'pro', 'business', 'enterprise', 'custom']
 
@@ -362,6 +372,49 @@ export default function AdminUserDetailPage() {
         </div>
       </div>
 
+      {/* Module usage breakdown */}
+      {conversations.length > 0 && (() => {
+        const byModule = {}
+        conversations.forEach(c => {
+          const mod = c.module || 'chat'
+          byModule[mod] = (byModule[mod] || 0) + 1
+        })
+        const sorted = Object.entries(byModule).sort((a, b) => b[1] - a[1])
+        const maxVal = sorted[0]?.[1] || 1
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+              <BarChart2 className="w-4 h-4 text-indigo-500" />
+              Shërbimet e Përdorura
+              <span className="text-xs font-normal text-gray-400 ml-1">— sipas bisedave</span>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {sorted.map(([mod, count]) => {
+                const meta = MODULE_META[mod] || { label: mod, color: 'bg-gray-400', icon: BarChart2 }
+                const Icon = meta.icon
+                const pct = Math.round((count / maxVal) * 100)
+                return (
+                  <div key={mod} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${meta.color}`}>
+                      <Icon className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs font-medium text-gray-700">{meta.label}</span>
+                        <span className="text-xs font-bold text-gray-800">{count} biseda</span>
+                      </div>
+                      <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full ${meta.color}`} style={{ width: `${pct}%` }} />
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })()}
+
       {/* Usage section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
         <div className="flex items-center justify-between mb-4">
@@ -412,6 +465,7 @@ export default function AdminUserDetailPage() {
           </h3>
           <InfoRow label="Emri i plotë" value={user.full_name} />
           <InfoRow label="Email" value={user.email} />
+          <InfoRow label="Celulari" value={user.phone} />
           <InfoRow label="Biznesi" value={user.business_name} />
           <InfoRow label="Industria" value={user.industry} />
           <InfoRow label="Qyteti" value={user.city} />
