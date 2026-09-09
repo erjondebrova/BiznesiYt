@@ -182,9 +182,9 @@ export default function RegisterPage() {
 
           <p className="text-center text-xs text-gray-400 mt-4">
             Duke u regjistruar pranoni{' '}
-            <a href="#" className="text-primary-500 hover:underline">Kushtet e Shërbimit</a>
+            <Link to="/terms" className="text-primary-500 hover:underline">Kushtet e Shërbimit</Link>
             {' '}dhe{' '}
-            <a href="#" className="text-primary-500 hover:underline">Politikën e Privatësisë</a>
+            <Link to="/privacy" className="text-primary-500 hover:underline">Politikën e Privatësisë</Link>
           </p>
 
           <p className="text-center text-sm text-gray-500 mt-4">

@@ -48,22 +48,22 @@
     @apply border border-primary-500 text-primary-500 hover:bg-primary-50 font-medium px-4 py-2 rounded-lg transition-all duration-200;
   }
   .card {
-    @apply bg-white rounded-xl shadow-card border border-gray-100 p-5;
+    @apply bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-card border border-gray-100 p-5;
   }
   .card-hover {
     @apply card hover:shadow-card-hover transition-shadow duration-200 cursor-pointer;
   }
   .input-field {
-    @apply w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+    @apply w-full border border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
   }
   .label {
-    @apply text-sm font-medium text-gray-700 mb-1 block;
+    @apply text-sm font-medium text-gray-700 dark:text-slate-300 mb-1 block;
   }
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-primary-50 hover:text-primary-600 transition-all duration-150 text-sm font-medium;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-slate-300 hover:bg-primary-50 dark:hover:bg-slate-700 hover:text-primary-600 dark:hover:text-white transition-all duration-150 text-sm font-medium;
   }
   .sidebar-link.active {
-    @apply bg-primary-50 text-primary-700 font-semibold;
+    @apply bg-primary-50 dark:bg-slate-700 text-primary-700 dark:text-white font-semibold;
   }
   .module-card {
     @apply card-hover flex flex-col gap-3 p-5 border border-gray-100;
@@ -99,3 +99,78 @@
 .typing-dot:nth-child(3) {
   animation-delay: 0.4s;
 }
+
+/* =================== DARK MODE =================== */
+html.dark {
+  color-scheme: dark;
+  --background: 222 47% 7%;
+  --foreground: 210 40% 92%;
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 92%;
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 92%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 217 33% 17%;
+  --accent-foreground: 210 40% 92%;
+  --border: 217 33% 22%;
+  --input: 217 33% 22%;
+}
+
+html.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+/* White / light gray backgrounds → dark slate */
+html.dark .bg-white,
+html.dark [class*=" bg-white"],
+html.dark [class^="bg-white"] {
+  background-color: #1e293b !important;
+}
+html.dark .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+html.dark .bg-gray-100 {
+  background-color: #1e293b !important;
+}
+
+/* Text */
+html.dark .text-gray-900 { color: #f1f5f9 !important; }
+html.dark .text-gray-800 { color: #e2e8f0 !important; }
+html.dark .text-gray-700 { color: #cbd5e1 !important; }
+html.dark .text-gray-600 { color: #94a3b8 !important; }
+html.dark .text-gray-500 { color: #64748b !important; }
+html.dark .text-gray-400 { color: #475569 !important; }
+
+/* Borders */
+html.dark .border-gray-100 { border-color: #334155 !important; }
+html.dark .border-gray-200 { border-color: #334155 !important; }
+
+/* Hover states */
+html.dark .hover\:bg-gray-50:hover { background-color: #1e293b !important; }
+html.dark .hover\:bg-gray-100:hover { background-color: #334155 !important; }
+
+/* Inputs, textareas, selects */
+html.dark input:not([type="checkbox"]):not([type="radio"]),
+html.dark textarea,
+html.dark select {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Tables */
+html.dark table { background-color: #1e293b; }
+html.dark thead { background-color: #0f172a !important; }
+html.dark tbody tr:hover { background-color: #334155 !important; }
+html.dark td, html.dark th { border-color: #334155 !important; color: #cbd5e1; }
+
+/* Scrollbar dark */
+html.dark ::-webkit-scrollbar-track { background-color: #1e293b; }
+html.dark ::-webkit-scrollbar-thumb { background-color: #475569; }
+html.dark ::-webkit-scrollbar-thumb:hover { background-color: #64748b; }
