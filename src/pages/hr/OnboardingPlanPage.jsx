@@ -1,38 +1,45 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { ArrowLeft, BookOpen, Wand2, Copy, Check, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '../../components/ui/button'
-import { ArrowLeft, ClipboardList, Sparkles, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react'
-
-const KNOWLEDGE_LEVELS = ['Fillestar i plotë', 'Pak eksperiencë', 'Mesatar', 'Ekspert']
-const WEEK_SECTIONS = [
-  { key: 'JAVA E PARË', label: 'Java e Parë — Orientimi', gradient: 'from-teal-500 to-cyan-500' },
-  { key: 'JAVA E DYTË', label: 'Java e Dytë — Integrimi', gradient: 'from-cyan-500 to-sky-500' },
-  { key: 'JAVA E TRETË DHE KATËRT', label: 'Jata 3-4 — Kontributi i Parë', gradient: 'from-sky-500 to-blue-500' },
-  { key: 'OBJEKTIVAT 3-MUJORE', label: 'Objektivat 30-60-90 Ditorë', gradient: 'from-blue-500 to-indigo-500' },
-  { key: 'CHECKLIST ONBOARDING', label: 'Checklist Onboarding', gradient: 'from-indigo-500 to-violet-500' },
-]
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 
 function parseSection(text, header) {
-  const regex = new RegExp(`## ${header}([\\s\\S]*?)(?=##|$)`, 'i')
-  const m = text.match(regex)
-  return m ? m[1].trim() : ''
+  const match = text.match(new RegExp(`## ${header}([\\s\\S]*?)(?=##|$)`))
+  return match ? match[1].trim() : ''
 }
 
-function WeekCard({ title, gradient, content }) {
+const WEEK_SECTIONS = [
+  { key: 'JAVA E PARË',            label: 'Java 1',     days: 'Ditët 1–7',   color: 'from-teal-400 to-cyan-500',    bg: 'bg-teal-50',   border: 'border-teal-100',   text: 'text-teal-700' },
+  { key: 'JAVA E DYTË',            label: 'Java 2',     days: 'Ditët 8–14',  color: 'from-blue-400 to-indigo-500',  bg: 'bg-blue-50',   border: 'border-blue-100',   text: 'text-blue-700' },
+  { key: 'JAVA E TRETË DHE KATËRT',label: 'Java 3–4',   days: 'Ditët 15–30', color: 'from-purple-400 to-violet-500',bg: 'bg-purple-50', border: 'border-purple-100', text: 'text-purple-700' },
+  { key: 'OBJEKTIVAT 3-MUJORE',    label: 'Muajt 2–3',  days: '30–90 ditë',  color: 'from-amber-400 to-orange-500', bg: 'bg-amber-50',  border: 'border-amber-100',  text: 'text-amber-700' },
+  { key: 'CHECKLIST',              label: 'Checklist',  days: '',            color: 'from-emerald-400 to-teal-500', bg: 'bg-emerald-50',border: 'border-emerald-100',text: 'text-emerald-700' },
+]
+
+function WeekCard({ section, content }) {
   const [open, setOpen] = useState(true)
   return (
-    <div className="rounded-2xl border border-gray-100 overflow-hidden">
-      <button
-        onClick={() => setOpen(v => !v)}
-        className={`w-full flex items-center justify-between p-4 bg-gradient-to-r ${gradient} text-white text-left`}
-      >
-        <span className="font-heading font-semibold text-sm">{title}</span>
-        {open ? <ChevronUp className="w-4 h-4 opacity-70" /> : <ChevronDown className="w-4 h-4 opacity-70" />}
+    <div className={`rounded-2xl border ${section.border} overflow-hidden`}>
+      <button onClick={() => setOpen(o => !o)}
+        className={`w-full flex items-center justify-between px-5 py-3.5 ${section.bg}`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${section.color} flex items-center justify-center`}>
+            <span className="text-white text-[10px] font-bold">{section.label.slice(0,2)}</span>
+          </div>
+          <div className="text-left">
+            <p className={`text-sm font-semibold ${section.text}`}>{section.label}</p>
+            {section.days && <p className="text-xs text-gray-400">{section.days}</p>}
+          </div>
+        </div>
+        {open ? <ChevronUp className="w-4 h-4 text-gray-400"/> : <ChevronDown className="w-4 h-4 text-gray-400"/>}
       </button>
       {open && (
-        <div className="p-4 bg-white">
-          <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{content}</p>
+        <div className="px-5 py-4 bg-white">
+          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{content}</p>
         </div>
       )}
     </div>
@@ -41,136 +48,123 @@ function WeekCard({ title, gradient, content }) {
 
 export default function OnboardingPlanPage() {
   const { profile } = useAuth()
-  const [form, setForm] = useState({ name: '', role: '', dept: '', knowledge: '' })
-  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState({ name: '', role: '', department: '', priorKnowledge: 'asnjë' })
   const [result, setResult] = useState('')
-  const [streaming, setStreaming] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
 
-  function upd(f, v) { setForm(p => ({ ...p, [f]: v })) }
+  function update(field, val) { setForm(p => ({ ...p, [field]: val })) }
 
   async function generate() {
-    if (!form.name.trim() || !form.role.trim()) return
-    setLoading(true); setResult(''); setStreaming('')
+    if (!form.name || !form.role) return
+    setLoading(true); setResult('')
+    const prompt = `Krijo një plan orientimi 30-ditor të detajuar për punonjësin e ri.
 
-    const prompt = `Krijo plan onboarding 30-ditor (4 javë) për punonjësin e ri:
-Biznesi: ${profile?.business_name || 'kompania'} (${profile?.industry || ''}) — ${profile?.city || 'Shqipëri'}
+Biznesi: ${profile?.business_name || 'Kompania jonë'}${profile?.industry ? ` — ${profile.industry}` : ''}
 Emri i punonjësit: ${form.name}
-Roli: ${form.role}${form.dept ? ` — Departamenti: ${form.dept}` : ''}
-Niveli i njohurive fillestare: ${form.knowledge || 'Mesatar'}
+Roli / Pozicioni: ${form.role}
+${form.department ? `Departamenti: ${form.department}` : ''}
+Njohuri paraprake për sektorin: ${form.priorKnowledge}
 
-Kthe SAKTËSISHT këto seksione:
+Gjenero planin e ndarë SAKTËSISHT në këto seksione:
 
 ## JAVA E PARË
-[Detyra dhe aktivitete ditore — orientimi, familjarizimi me ekipin, sistemet, politikat]
+(Ditët 1-7: takime prezantuese, orientim fizik, sistemet bazë, njohja me ekipin. Listoni aktivitete specifike çdo ditë.)
 
 ## JAVA E DYTË
-[Detyra dhe aktivitete — fillim i punës reale nën supervizim, trajnime specifike]
+(Ditët 8-14: zhytje në detyrat e rolit, hije të kolegëve, trajnim produktesh/shërbimesh. Aktivitete ditore specifike.)
 
 ## JAVA E TRETË DHE KATËRT
-[Kontribut i pavarur, projektet e para, takimet me ekipin]
+(Ditët 15-30: autonomi e shtuar, detyra të pavarura, takime 1:1 me menaxherin, feedback i ndërmjetëm.)
 
 ## OBJEKTIVAT 3-MUJORE
-[Objektivat e qarta dhe të matshme për muajin 1, 2 dhe 3 — specifike për rolin]
+(4-5 objektiva konkretë dhe të matshëm për muajt 2-3. Secili me kriterin e suksesit.)
 
-## CHECKLIST ONBOARDING
-[Lista e detyrave administrative dhe praktike: kontratat, sistemet, akseset, prezantimi ekipit]
+## CHECKLIST
+(Lista kompakte e gjithçkaje që duhet bërë në 30 ditët e para — sisteme, akses, takime, trajnime, dokumenta.)
 
-Shkruaj shqip. Ji specifik dhe praktik. Inkluzo emrin ${form.name} në plan.`
+Shkruaj praktikisht, me detyra konkrete dhe të zbatueshme. Shqip.`
 
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: prompt }],
-          systemPrompt: 'Ti je specialist HR dhe onboarding. Gjenero plane onboarding praktike dhe të detajuara. Fol shqip.',
-        }),
-      })
-      if (!res.ok) return
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let full = ''
+      const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }) })
+      const reader = res.body.getReader(); const decoder = new TextDecoder(); let full = ''
       while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value, { stream: true })
-        for (const line of chunk.split('\n').filter(l => l.startsWith('data: '))) {
-          const data = line.slice(6)
-          if (data === '[DONE]') break
-          try {
-            const p = JSON.parse(data)
-            const delta = p.delta?.text || p.choices?.[0]?.delta?.content || ''
-            if (delta) { full += delta; setStreaming(full) }
-          } catch {}
+        const { done, value } = await reader.read(); if (done) break
+        for (const line of decoder.decode(value).split('\n')) {
+          if (line.startsWith('data: ')) { try { const d = JSON.parse(line.slice(6)); if (d.content) { full += d.content; setResult(full) } } catch {} }
         }
       }
-      setResult(full)
-    } catch (e) { console.error(e) }
-    finally { setLoading(false); setStreaming('') }
+    } catch (e) { console.error(e) } finally { setLoading(false) }
   }
 
-  const displayText = result || streaming
+  function copy() { navigator.clipboard.writeText(result); setCopied(true); setTimeout(() => setCopied(false), 2000) }
+
+  const sections = WEEK_SECTIONS.map(s => ({ ...s, content: parseSection(result, s.key) })).filter(s => s.content)
 
   return (
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto">
-      <Link to="/hr" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
-        <ArrowLeft className="w-4 h-4" /> HR & Ekipi
+    <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-5">
+      <Link to="/hr" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700">
+        <ArrowLeft className="w-4 h-4"/> HR & Ekipi
       </Link>
 
-      <div className="relative overflow-hidden rounded-2xl mb-6 bg-gradient-to-r from-purple-500 to-violet-600 text-white p-5 sm:p-6">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-12 translate-x-12" />
-        <div className="relative flex items-start gap-3">
+      <div className="bg-gradient-to-br from-purple-500 to-violet-600 rounded-2xl p-5 text-white">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-            <ClipboardList className="w-5 h-5 text-white" />
+            <BookOpen className="w-5 h-5"/>
           </div>
           <div>
-            <h1 className="font-heading text-xl font-bold mb-1">Plan Onboarding</h1>
-            <p className="text-purple-100 text-sm">Plan 30-ditor me AI — integrate çdo punonjës të ri me sukses.</p>
+            <h1 className="font-heading text-xl font-bold">Plan Orientimi</h1>
+            <p className="text-purple-100 text-sm">Plan 30-ditor i personalizuar për punonjësin e ri</p>
           </div>
         </div>
       </div>
 
-      <div className="card mb-4 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="label">Emri i Punonjësit <span className="text-red-500">*</span></label>
-            <input value={form.name} onChange={e => upd('name', e.target.value)}
-              placeholder="p.sh. Arta Hoxha" className="input-field" />
+      <div className="card space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="col-span-2 sm:col-span-1">
+            <Label>Emri i Punonjësit *</Label>
+            <Input value={form.name} onChange={e => update('name', e.target.value)} className="mt-1" placeholder="p.sh. Ardit Krasniqi"/>
           </div>
-          <div>
-            <label className="label">Roli / Pozicioni <span className="text-red-500">*</span></label>
-            <input value={form.role} onChange={e => upd('role', e.target.value)}
-              placeholder="p.sh. Kontabilist, Shitës..." className="input-field" />
-          </div>
-          <div>
-            <label className="label">Departamenti</label>
-            <input value={form.dept} onChange={e => upd('dept', e.target.value)}
-              placeholder="p.sh. Financë, Marketing..." className="input-field" />
-          </div>
-          <div>
-            <label className="label">Njohuri Fillestare</label>
-            <select value={form.knowledge} onChange={e => upd('knowledge', e.target.value)} className="input-field">
-              <option value="">Zgjidhni...</option>
-              {KNOWLEDGE_LEVELS.map(k => <option key={k} value={k}>{k}</option>)}
-            </select>
+          <div className="col-span-2 sm:col-span-1">
+            <Label>Roli / Pozicioni *</Label>
+            <Input value={form.role} onChange={e => update('role', e.target.value)} className="mt-1" placeholder="p.sh. Asistent Kontabiliteti"/>
           </div>
         </div>
-        <Button onClick={generate} disabled={loading || !form.name.trim() || !form.role.trim()} className="w-full gap-2">
-          {loading ? <><RefreshCw className="w-4 h-4 animate-spin" />Duke gjeneruar...</> : <><Sparkles className="w-4 h-4" />Gjenero Planin</>}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>Departamenti</Label>
+            <Input value={form.department} onChange={e => update('department', e.target.value)} className="mt-1" placeholder="p.sh. Financa"/>
+          </div>
+          <div>
+            <Label>Njohuri Paraprake</Label>
+            <Select value={form.priorKnowledge} onValueChange={v => update('priorKnowledge', v)}>
+              <SelectTrigger className="mt-1"><SelectValue/></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asnjë">Asnjë / Fillestare</SelectItem>
+                <SelectItem value="bazë">Bazë</SelectItem>
+                <SelectItem value="të mira">Të mira</SelectItem>
+                <SelectItem value="shumë të mira">Shumë të mira / Expert</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <Button onClick={generate} disabled={loading || !form.name || !form.role} className="w-full gap-2 h-11">
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin"/>Duke gjeneruar...</> : <><Wand2 className="w-4 h-4"/>Krijo Planin 30-Ditor</>}
         </Button>
       </div>
 
-      {displayText && (
+      {result && (
         <div className="space-y-3">
-          {result ? WEEK_SECTIONS.map(s => {
-            const content = parseSection(result, s.key)
-            if (!content) return null
-            return <WeekCard key={s.key} title={s.label} gradient={s.gradient} content={content} />
-          }) : (
-            <div className="card">
-              <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{streaming}</p>
-            </div>
-          )}
+          <div className="flex items-center justify-between">
+            <h3 className="font-heading font-semibold text-gray-900">Plani i Orientimit — {form.name}</h3>
+            <button onClick={copy} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors">
+              {copied ? <><Check className="w-3.5 h-3.5 text-green-500"/>Kopjuar</> : <><Copy className="w-3.5 h-3.5"/>Kopjo</>}
+            </button>
+          </div>
+          {sections.length > 0
+            ? sections.map(s => <WeekCard key={s.key} section={s} content={s.content}/>)
+            : <div className="card"><p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{result}</p></div>
+          }
         </div>
       )}
     </div>

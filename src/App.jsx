@@ -32,11 +32,16 @@ import VATCalculatorPage from './pages/financial/VATCalculatorPage'
 import PayrollCalculatorPage from './pages/financial/PayrollCalculatorPage'
 import InvoiceGeneratorPage from './pages/financial/InvoiceGeneratorPage'
 import ROICalculatorPage from './pages/financial/ROICalculatorPage'
+import BusinessDiagnosticPage from './pages/growth/BusinessDiagnosticPage'
+import GrowthPlanPage from './pages/growth/GrowthPlanPage'
+import FundingPage from './pages/growth/FundingPage'
+import KPIDashboardPage from './pages/growth/KPIDashboardPage'
 import LegalPage from './pages/legal/LegalPage'
 import LegalAdvisorPage from './pages/legal/LegalAdvisorPage'
 import DocumentTemplatesPage from './pages/legal/DocumentTemplatesPage'
 import FiscalCalendarPage from './pages/legal/FiscalCalendarPage'
 import NIPTGuidePage from './pages/legal/NIPTGuidePage'
+import EmploymentGuidePage from './pages/legal/EmploymentGuidePage'
 import GrowthPage from './pages/growth/GrowthPage'
 import HRPage from './pages/hr/HRPage'
 import JobDescriptionPage from './pages/hr/JobDescriptionPage'
@@ -187,14 +192,64 @@ function AppRoutes() {
           <Layout><NIPTGuidePage /></Layout>
         </ProtectedRoute>
       } />
+      <Route path="/legal/employment" element={
+        <ProtectedRoute>
+          <Layout><EmploymentGuidePage /></Layout>
+        </ProtectedRoute>
+      } />
       <Route path="/growth" element={
         <ProtectedRoute>
           <Layout><GrowthPage /></Layout>
         </ProtectedRoute>
       } />
-      <Route path="/growth/*" element={
+      <Route path="/growth/diagnostic" element={
         <ProtectedRoute>
-          <Layout><GrowthPage /></Layout>
+          <Layout><BusinessDiagnosticPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/plan" element={
+        <ProtectedRoute>
+          <Layout><GrowthPlanPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/funding" element={
+        <ProtectedRoute>
+          <Layout><FundingPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/kpi" element={
+        <ProtectedRoute>
+          <Layout><KPIDashboardPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr" element={
+        <ProtectedRoute>
+          <Layout><HRPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/job" element={
+        <ProtectedRoute>
+          <Layout><JobDescriptionPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/interview" element={
+        <ProtectedRoute>
+          <Layout><InterviewQuestionsPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/onboarding" element={
+        <ProtectedRoute>
+          <Layout><OnboardingPlanPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/hr/review" element={
+        <ProtectedRoute>
+          <Layout><PerformanceReviewPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/raporte" element={
+        <ProtectedRoute>
+          <Layout><RaportePage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/hr" element={

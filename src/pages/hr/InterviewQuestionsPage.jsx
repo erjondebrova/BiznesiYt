@@ -1,179 +1,156 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { ArrowLeft, MessageSquare, Wand2, Copy, Check, Loader2 } from 'lucide-react'
 import { Button } from '../../components/ui/button'
-import { ArrowLeft, MessageSquare, Sparkles, RefreshCw } from 'lucide-react'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 
-const LEVELS = ['Juniori', 'Mesatar', 'Senior', 'Manager', 'C-Level']
 const FOCUS_AREAS = [
-  { id: 'tech', label: 'Teknike' },
-  { id: 'behavior', label: 'Sjelljeje' },
-  { id: 'culture', label: 'Kulturë' },
-  { id: 'leadership', label: 'Lidershipi' },
-  { id: 'problem', label: 'Problem-Solving' },
-  { id: 'communication', label: 'Komunikim' },
-  { id: 'stress', label: 'Stres & Presion' },
-  { id: 'motivation', label: 'Motivim' },
-  { id: 'team', label: 'Punë Ekipi' },
-  { id: 'experience', label: 'Eksperiencë e Kaluar' },
+  'Aftësi teknike', 'Punë ekipore', 'Udhëheqje', 'Komunikim',
+  'Zgjidhje problemesh', 'Menaxhim kohe', 'Shitje', 'Shërbim klienti',
+  'Kreativitet', 'Ndryshim & presion',
 ]
-const SECTION_COLORS = {
-  'PYETJE TEKNIKE': 'border-blue-200 bg-blue-50',
-  'PYETJE SJELLJEJE': 'border-purple-200 bg-purple-50',
-  'PYETJE MOTIVIMI DHE KULTURË': 'border-amber-200 bg-amber-50',
-  'PYETJE SITUACIONALE': 'border-emerald-200 bg-emerald-50',
-}
+
+const CATEGORIES = ['PYETJE TEKNIKE', 'PYETJE SJELLORE', 'PYETJE SITUATASH', 'PYETJE PËR KANDIDATIN']
 
 function parseSection(text, header) {
-  const regex = new RegExp(`## ${header}([\\s\\S]*?)(?=##|$)`, 'i')
-  const m = text.match(regex)
-  return m ? m[1].trim() : ''
+  const match = text.match(new RegExp(`## ${header}([\\s\\S]*?)(?=##|$)`))
+  return match ? match[1].trim() : ''
+}
+
+const CATEGORY_COLORS = {
+  'PYETJE TEKNIKE':        { bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-100' },
+  'PYETJE SJELLORE':       { bg: 'bg-purple-50',  text: 'text-purple-700',  border: 'border-purple-100' },
+  'PYETJE SITUATASH':      { bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-100' },
+  'PYETJE PËR KANDIDATIN': { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-100' },
 }
 
 export default function InterviewQuestionsPage() {
   const { profile } = useAuth()
   const [role, setRole] = useState('')
-  const [level, setLevel] = useState('')
-  const [focus, setFocus] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [level, setLevel] = useState('mid')
+  const [areas, setAreas] = useState([])
   const [result, setResult] = useState('')
-  const [streaming, setStreaming] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [copied, setCopied] = useState(false)
 
-  function toggleFocus(id) {
-    setFocus(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])
+  function toggleArea(a) {
+    setAreas(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a])
   }
 
   async function generate() {
-    if (!role.trim()) return
-    setLoading(true); setResult(''); setStreaming('')
-    const focusLabels = focus.map(id => FOCUS_AREAS.find(f => f.id === id)?.label).filter(Boolean).join(', ')
-    const prompt = `Gjenero pyetje interviste profesionale për pozicionin:
-Biznesi: ${profile?.business_name || 'kompania'} (${profile?.industry || ''})
-Roli: ${role}
-Niveli: ${level || 'Mesatar'}
-${focusLabels ? `Fokusi: ${focusLabels}` : ''}
+    if (!role) return
+    setLoading(true); setResult('')
+    const levelMap = { junior: 'Junior (0–2 vjet)', mid: 'Mesëm (2–5 vjet)', senior: 'Senior (5+ vjet)' }
+    const prompt = `Gjenero pyetje interviste profesionale për pozicionin: ${role}
+Industria: ${profile?.industry || 'e përgjithshme'}
+Niveli: ${levelMap[level]}
+${areas.length > 0 ? `Fushat prioritare: ${areas.join(', ')}` : ''}
 
-Kthe saktësisht këto seksione:
+Gjenero 20 pyetje të ndara SAKTËSISHT në këto 4 seksione:
+
 ## PYETJE TEKNIKE
-[8-10 pyetje specifike teknike/profesionale për rolin]
+(5 pyetje specifike për rolin dhe kompetencat teknike. Pas çdo pyetjeje shkruaj: 💡 *Pse e bëjmë: [arsyetimi i shkurtër]*)
 
-## PYETJE SJELLJEJE
-[6-8 pyetje bazuar në metodën STAR (Situatë, Task, Aksion, Rezultat)]
+## PYETJE SJELLORE
+(5 pyetje STAR method — situatë, detyrë, veprim, rezultat. Pas çdo pyetjeje shkruaj: 💡 *Çfarë vlerësojmë: [arsyetimi]*)
 
-## PYETJE MOTIVIMI DHE KULTURË
-[5-6 pyetje për motivimin, vlerët dhe kulturën e kompanisë]
+## PYETJE SITUATASH
+(5 skenarë hipotetikë konkretë për rolin. Pas çdo pyetjeje shkruaj: 💡 *Çfarë vlerësojmë: [arsyetimi]*)
 
-## PYETJE SITUACIONALE
-[5-6 skenarë hipotetikë specifike për industrinë]
+## PYETJE PËR KANDIDATIN
+(5 pyetje inteligjente që kandidati mund t'i bëjë kompanisë — tregon motivimin dhe seriozitetin e tyre)
 
-Për çdo pyetje, shto (nëse relevant): 🎯 Çfarë vlerësoni me këtë pyetje
-Fol shqip. Pyetjet duhet të jenë konkrete, specifike dhe të dobishme.`
+Shkruaj në shqip, qartë dhe konkretisht.`
 
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: prompt }],
-          systemPrompt: 'Ti je ekspert HR dhe rekrutimi. Gjenero pyetje interviste profesionale dhe efektive. Fol shqip.',
-        }),
-      })
-      if (!res.ok) return
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let full = ''
+      const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] }) })
+      const reader = res.body.getReader(); const decoder = new TextDecoder(); let full = ''
       while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value, { stream: true })
-        for (const line of chunk.split('\n').filter(l => l.startsWith('data: '))) {
-          const data = line.slice(6)
-          if (data === '[DONE]') break
-          try {
-            const p = JSON.parse(data)
-            const delta = p.delta?.text || p.choices?.[0]?.delta?.content || ''
-            if (delta) { full += delta; setStreaming(full) }
-          } catch {}
+        const { done, value } = await reader.read(); if (done) break
+        for (const line of decoder.decode(value).split('\n')) {
+          if (line.startsWith('data: ')) { try { const d = JSON.parse(line.slice(6)); if (d.content) { full += d.content; setResult(full) } } catch {} }
         }
       }
-      setResult(full)
-    } catch (e) { console.error(e) }
-    finally { setLoading(false); setStreaming('') }
+    } catch (e) { console.error(e) } finally { setLoading(false) }
   }
 
-  const displayText = result || streaming
+  function copy() { navigator.clipboard.writeText(result); setCopied(true); setTimeout(() => setCopied(false), 2000) }
+
+  const sections = CATEGORIES.map(c => ({ title: c, content: parseSection(result, c), style: CATEGORY_COLORS[c] })).filter(s => s.content)
 
   return (
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto">
-      <Link to="/hr" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-4">
-        <ArrowLeft className="w-4 h-4" /> HR & Ekipi
+    <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-5">
+      <Link to="/hr" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700">
+        <ArrowLeft className="w-4 h-4"/> HR & Ekipi
       </Link>
 
-      <div className="relative overflow-hidden rounded-2xl mb-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-5 sm:p-6">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-12 translate-x-12" />
-        <div className="relative flex items-start gap-3">
+      <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 text-white">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-            <MessageSquare className="w-5 h-5 text-white" />
+            <MessageSquare className="w-5 h-5"/>
           </div>
           <div>
-            <h1 className="font-heading text-xl font-bold mb-1">Pyetje Interviste</h1>
-            <p className="text-blue-100 text-sm">Pyetje të personalizuara sipas rolit dhe nivelit — gjenero me AI.</p>
+            <h1 className="font-heading text-xl font-bold">Pyetje Interviste</h1>
+            <p className="text-blue-100 text-sm">Teknike, sjellore dhe situatash — personalizuar me AI</p>
           </div>
         </div>
       </div>
 
-      <div className="card mb-4 space-y-4">
-        <div>
-          <label className="label">Roli i Kandidatit <span className="text-red-500">*</span></label>
-          <input value={role} onChange={e => setRole(e.target.value)}
-            placeholder="p.sh. Kontabilist, Shitës, Developer, Manager..."
-            className="input-field" />
+      <div className="card space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="col-span-2 sm:col-span-1">
+            <Label>Pozicioni / Roli *</Label>
+            <Input value={role} onChange={e => setRole(e.target.value)} className="mt-1" placeholder="p.sh. Kontabilist, Shitës, Programues..."/>
+          </div>
+          <div className="col-span-2 sm:col-span-1">
+            <Label>Niveli</Label>
+            <Select value={level} onValueChange={setLevel}>
+              <SelectTrigger className="mt-1"><SelectValue/></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="junior">Junior (0–2 vjet)</SelectItem>
+                <SelectItem value="mid">Mesëm (2–5 vjet)</SelectItem>
+                <SelectItem value="senior">Senior (5+ vjet)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
+
         <div>
-          <label className="label">Niveli i Eksperiencës</label>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {LEVELS.map(l => (
-              <button key={l} onClick={() => setLevel(level === l ? '' : l)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                  level === l ? 'bg-blue-500 text-white border-blue-500' : 'border-gray-200 text-gray-600 hover:border-blue-300'
-                }`}>
-                {l}
+          <Label>Fushat Prioritare <span className="text-gray-400 font-normal">(opsionale — zgjidhni deri 3)</span></Label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {FOCUS_AREAS.map(a => (
+              <button key={a} onClick={() => toggleArea(a)}
+                className={`text-xs px-3 py-1.5 rounded-full border transition-all ${areas.includes(a) ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'}`}>
+                {a}
               </button>
             ))}
           </div>
         </div>
-        <div>
-          <label className="label">Fokusi i Pyetjeve <span className="text-gray-400 font-normal">(zgjidhni disa)</span></label>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {FOCUS_AREAS.map(f => (
-              <button key={f.id} onClick={() => toggleFocus(f.id)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                  focus.includes(f.id) ? 'bg-indigo-500 text-white border-indigo-500' : 'border-gray-200 text-gray-600 hover:border-indigo-300'
-                }`}>
-                {f.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <Button onClick={generate} disabled={loading || !role.trim()} className="w-full gap-2">
-          {loading ? <><RefreshCw className="w-4 h-4 animate-spin" />Duke gjeneruar...</> : <><Sparkles className="w-4 h-4" />Gjenero Pyetjet</>}
+
+        <Button onClick={generate} disabled={loading || !role} className="w-full gap-2 h-11">
+          {loading ? <><Loader2 className="w-4 h-4 animate-spin"/>Duke gjeneruar...</> : <><Wand2 className="w-4 h-4"/>Gjenero 20 Pyetje</>}
         </Button>
       </div>
 
-      {displayText && (
+      {result && (
         <div className="space-y-3">
-          {result ? Object.entries(SECTION_COLORS).map(([key, color]) => {
-            const content = parseSection(result, key)
-            if (!content) return null
-            return (
-              <div key={key} className={`rounded-2xl border p-4 ${color}`}>
-                <h3 className="font-heading font-semibold text-gray-800 text-sm mb-3">{key}</h3>
-                <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{content}</p>
-              </div>
-            )
-          }) : (
+          <div className="flex items-center justify-between">
+            <h3 className="font-heading font-semibold text-gray-900">Pyetjet e Intervistës</h3>
+            <button onClick={copy} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors">
+              {copied ? <><Check className="w-3.5 h-3.5 text-green-500"/>Kopjuar</> : <><Copy className="w-3.5 h-3.5"/>Kopjo</>}
+            </button>
+          </div>
+          {sections.length > 0 ? sections.map(s => (
+            <div key={s.title} className={`rounded-2xl border p-5 ${s.style.bg} ${s.style.border}`}>
+              <h4 className={`text-xs font-bold uppercase tracking-wider mb-3 ${s.style.text}`}>{s.title}</h4>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{s.content}</p>
+            </div>
+          )) : (
             <div className="card">
-              <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{streaming}</p>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{result}</p>
             </div>
           )}
         </div>
