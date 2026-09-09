@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import {
   LayoutDashboard, MessageSquare, TrendingUp, BarChart3, Scale,
-  Rocket, Settings, LogOut, Zap, Menu, X, ChevronRight, Bell
+  Rocket, Settings, LogOut, Zap, Menu, X, ChevronRight, Bell, Briefcase, PieChart
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 
@@ -15,6 +15,8 @@ const navItems = [
   { icon: BarChart3, label: 'Financiar', href: '/financial' },
   { icon: Scale, label: 'Ligjore & Fiskal', href: '/legal' },
   { icon: Rocket, label: 'Rritje', href: '/growth' },
+  { icon: Briefcase, label: 'HR & Ekipi', href: '/hr' },
+  { icon: PieChart, label: 'Raporte', href: '/raporte' },
   { type: 'separator' },
   { icon: Settings, label: 'Cilësimet', href: '/settings' },
 ]
@@ -82,8 +84,11 @@ export default function Layout({ children }) {
       {/* User */}
       <div className="p-4 border-t border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold">
-            {profile?.full_name?.[0]?.toUpperCase() || 'U'}
+          <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+            {profile?.avatar_url
+              ? <img src={profile.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+              : (profile?.full_name?.[0]?.toUpperCase() || 'U')
+            }
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium text-gray-800 truncate">{profile?.full_name}</div>
