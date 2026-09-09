@@ -4,10 +4,10 @@ import { supabase, isConfigured } from '../../lib/supabase'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
-import { Zap, Mail, Lock, User, AlertCircle, CheckCircle } from 'lucide-react'
+import { Zap, Mail, Lock, User, AlertCircle, CheckCircle, Phone } from 'lucide-react'
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ fullName: '', email: '', password: '', confirmPassword: '' })
+  const [form, setForm] = useState({ fullName: '', phone: '', email: '', password: '', confirmPassword: '' })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -63,6 +63,7 @@ export default function RegisterPage() {
         await supabase.from('users_profile').upsert({
           id: data.user.id,
           full_name: form.fullName,
+          phone: form.phone || null,
           onboarding_completed: false,
         })
         navigate('/onboarding')
@@ -149,6 +150,14 @@ export default function RegisterPage() {
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input id="fullName" type="text" placeholder="Arben Hoxha" value={form.fullName}
                   onChange={handleChange('fullName')} className="pl-9" required />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="phone">Numri i Celularit</Label>
+              <div className="relative mt-1">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input id="phone" type="tel" placeholder="+355 6X XXX XXXX" value={form.phone}
+                  onChange={handleChange('phone')} className="pl-9" />
               </div>
             </div>
             <div>
