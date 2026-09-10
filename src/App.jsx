@@ -25,6 +25,9 @@ import CalendarPage from './pages/marketing/CalendarPage'
 import VideoScriptPage from './pages/marketing/VideoScriptPage'
 import EmailCampaignPage from './pages/marketing/EmailCampaignPage'
 import AdCampaignPage from './pages/marketing/AdCampaignPage'
+import LandingPageGeneratorPage from './pages/marketing/LandingPageGeneratorPage'
+import BuyerPersonaPage from './pages/marketing/BuyerPersonaPage'
+import ReviewGeneratorPage from './pages/marketing/ReviewGeneratorPage'
 import FinancialPage from './pages/financial/FinancialPage'
 import PricingCalculatorPage from './pages/financial/PricingCalculatorPage'
 import CashFlowPage from './pages/financial/CashFlowPage'
@@ -124,6 +127,21 @@ function AppRoutes() {
       <Route path="/marketing/ads" element={
         <ProtectedRoute>
           <Layout><AdCampaignPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/marketing/landing" element={
+        <ProtectedRoute>
+          <Layout><LandingPageGeneratorPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/marketing/persona" element={
+        <ProtectedRoute>
+          <Layout><BuyerPersonaPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/marketing/reviews" element={
+        <ProtectedRoute>
+          <Layout><ReviewGeneratorPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/financial" element={

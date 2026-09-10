@@ -1,15 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { TrendingUp, FileText, Users, Calendar, Video, Mail, Megaphone, ArrowRight, Sparkles } from 'lucide-react'
+import { TrendingUp, FileText, Users, Calendar, Video, Mail, Megaphone, Globe, UserCircle, Star, ArrowRight, Sparkles } from 'lucide-react'
 
 const tools = [
-  { icon: TrendingUp, title: 'Plan Marketingu',     desc: 'Plan 30-ditor i personalizuar me strategji konkrete për biznesin tënd.',         href: '/marketing/plan',    color: 'text-orange-500', bg: 'bg-orange-50',  grad: 'from-orange-400 to-amber-500',    cta: 'Gjenero Planin' },
-  { icon: FileText,   title: 'Krijues Përmbajtjesh', desc: 'Postime për Instagram, Facebook dhe Ads — 3 variante + hashtags gati.',          href: '/marketing/content', color: 'text-blue-500',   bg: 'bg-blue-50',    grad: 'from-blue-400 to-cyan-500',       cta: 'Krijo Përmbajtje' },
-  { icon: Users,      title: 'Analizë Konkurrence',  desc: 'Pikat e forta dhe dobësitë e konkurrentëve — mundësitë e tregut për ty.',        href: '/marketing/compete', color: 'text-green-500',  bg: 'bg-green-50',   grad: 'from-green-400 to-emerald-500',   cta: 'Analizo Tregun' },
-  { icon: Mail,       title: 'Email Marketing',       desc: '3 variante email — promo, newsletter dhe rikthim klientësh gati për dërgim.',   href: '/marketing/email',   color: 'text-teal-500',   bg: 'bg-teal-50',    grad: 'from-teal-400 to-cyan-500',       cta: 'Shkruaj Email',   isNew: true },
-  { icon: Video,      title: 'Skript Video',          desc: 'Skripta virale për TikTok, Reels, YouTube Shorts — hook + trup + CTA.',         href: '/marketing/video',   color: 'text-purple-500', bg: 'bg-purple-50',  grad: 'from-purple-400 to-violet-500',   cta: 'Shkruaj Skript',  isNew: true },
-  { icon: Calendar,   title: 'Kalendar Postimesh',    desc: 'Plan mujor i plotë — çdo ditë me ide konkrete për të gjitha kanalet.',           href: '/marketing/calendar',color: 'text-indigo-500', bg: 'bg-indigo-50',  grad: 'from-indigo-400 to-blue-500',     cta: 'Gjenero Kalendar',isNew: true },
-  { icon: Megaphone,  title: 'Reklamë Dixhitale',     desc: 'Copy reklamash për Meta, TikTok & Google Ads — 3 variante + targeting.',        href: '/marketing/ads',     color: 'text-violet-500', bg: 'bg-violet-50',  grad: 'from-violet-400 to-purple-500',   cta: 'Shkruaj Reklamë', isNew: true },
+  { icon: TrendingUp,  title: 'Plan Marketingu',        desc: 'Plan 30-ditor i personalizuar me strategji konkrete për biznesin tënd.',           href: '/marketing/plan',     color: 'text-orange-500', bg: 'bg-orange-50',  grad: 'from-orange-400 to-amber-500',   cta: 'Gjenero Planin'    },
+  { icon: FileText,    title: 'Krijues Përmbajtjesh',   desc: 'Postime për Instagram, Facebook dhe Ads — 3 variante + hashtags gati.',            href: '/marketing/content',  color: 'text-blue-500',   bg: 'bg-blue-50',    grad: 'from-blue-400 to-cyan-500',      cta: 'Krijo Përmbajtje' },
+  { icon: Users,       title: 'Analizë Konkurrence',    desc: 'Pikat e forta dhe dobësitë e konkurrentëve — mundësitë e tregut për ty.',          href: '/marketing/compete',  color: 'text-green-500',  bg: 'bg-green-50',   grad: 'from-green-400 to-emerald-500',  cta: 'Analizo Tregun'   },
+  { icon: Mail,        title: 'Email Marketing',         desc: '3 variante email — promo, newsletter dhe rikthim klientësh gati për dërgim.',     href: '/marketing/email',    color: 'text-teal-500',   bg: 'bg-teal-50',    grad: 'from-teal-400 to-cyan-500',      cta: 'Shkruaj Email',    isNew: true },
+  { icon: Video,       title: 'Skript Video',            desc: 'Skripta virale për TikTok, Reels, YouTube Shorts — hook + trup + CTA.',           href: '/marketing/video',    color: 'text-purple-500', bg: 'bg-purple-50',  grad: 'from-purple-400 to-violet-500',  cta: 'Shkruaj Skript',   isNew: true },
+  { icon: Calendar,    title: 'Kalendar Postimesh',      desc: 'Plan mujor i plotë — çdo ditë me ide konkrete për të gjitha kanalet.',             href: '/marketing/calendar', color: 'text-indigo-500', bg: 'bg-indigo-50',  grad: 'from-indigo-400 to-blue-500',    cta: 'Gjenero Kalendar', isNew: true },
+  { icon: Megaphone,   title: 'Reklamë Dixhitale',       desc: 'Copy reklamash për Meta, TikTok & Google Ads — 3 variante + targeting.',          href: '/marketing/ads',      color: 'text-violet-500', bg: 'bg-violet-50',  grad: 'from-violet-400 to-purple-500',  cta: 'Shkruaj Reklamë',  isNew: true },
+  { icon: Globe,       title: 'Landing Page Generator',  desc: 'Tekst i plotë për faqen e shitjeve: headline, benefite, testimoniale dhe CTA.',   href: '/marketing/landing',  color: 'text-violet-600', bg: 'bg-violet-50',  grad: 'from-violet-500 to-purple-600',  cta: 'Gjenero Faqen',    isNew: true },
+  { icon: UserCircle,  title: 'Klienti Ideal (Persona)', desc: 'Profil i strukturuar: kush është, çfarë do, ku e gjen dhe si e bind.',            href: '/marketing/persona',  color: 'text-rose-500',   bg: 'bg-rose-50',    grad: 'from-rose-400 to-pink-500',      cta: 'Krijo Personën',   isNew: true },
+  { icon: Star,        title: 'Gjenerator Reviewsh',     desc: 'Mesazhe për t\'u kërkuar reviews, follow-up dhe pyetje për testimoniale cilësore.',href: '/marketing/reviews',  color: 'text-amber-500',  bg: 'bg-amber-50',   grad: 'from-amber-400 to-orange-400',   cta: 'Gjenero Mesazhet', isNew: true },
 ]
 
 export default function MarketingPage() {
@@ -35,7 +38,7 @@ export default function MarketingPage() {
             <p className="text-orange-100 text-sm mt-0.5">Strategji, përmbajtje dhe reklama të personalizuara me AI</p>
           </div>
           <div className="ml-auto hidden sm:flex flex-col items-end gap-1">
-            <span className="text-3xl font-bold">7</span>
+            <span className="text-3xl font-bold">10</span>
             <span className="text-xs text-orange-200">mjete aktive</span>
           </div>
         </div>
