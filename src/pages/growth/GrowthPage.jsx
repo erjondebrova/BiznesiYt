@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Rocket, Activity, Target, DollarSign, BarChart2, ArrowRight, Sparkles } from 'lucide-react'
+import { Rocket, Activity, Target, DollarSign, BarChart2, Package, ArrowRight, Sparkles } from 'lucide-react'
 
 const tools = [
   { icon: Activity,   title: 'Diagnostikë Biznesi',  desc: 'Analizo gjendjen aktuale me SWOT analiz dhe prioritete urgjente nga AI.',          href: '/growth/diagnostic', color: 'text-emerald-500', bg: 'bg-emerald-50', grad: 'from-emerald-400 to-teal-500',   cta: 'Analizo Tani' },
   { icon: Target,     title: 'Plan Rritje 90-Ditor', desc: 'Gjenero hapa konkretë dhe të zbatueshëm për 3 muajt e ardhshëm.',                   href: '/growth/plan',       color: 'text-blue-500',    bg: 'bg-blue-50',    grad: 'from-blue-400 to-indigo-500',    cta: 'Krijo Planin' },
   { icon: DollarSign, title: 'Mundësi Financimi',    desc: 'Zbulo grante, kredi dhe investitorë — AIDA, BE, EBRD, banka dhe mikrofinancë.',    href: '/growth/funding',    color: 'text-amber-500',   bg: 'bg-amber-50',   grad: 'from-amber-400 to-orange-500',   cta: 'Shiko Mundësitë' },
   { icon: BarChart2,  title: 'KPI Dashboard',        desc: 'Vendos targetat tuaj dhe monitoro progresin mujor me tregues kyç të performancës.', href: '/growth/kpi',        color: 'text-purple-500',  bg: 'bg-purple-50',  grad: 'from-purple-400 to-violet-500',  cta: 'Hap Dashboard' },
+  { icon: DollarSign, title: 'Strategji Çmimesh',    desc: 'Krijo paketa çmimesh, oferta sezonale dhe strategji upsell — me arsyetim profesional.', href: '/growth/pricing',    color: 'text-amber-500',   bg: 'bg-amber-50',   grad: 'from-amber-400 to-yellow-500',   cta: 'Krijo Strategjinë', isNew: true },
+  { icon: Package,    title: 'Përshkrim Produkti',   desc: 'Shkruaj përshkrime tërheqëse për produkte, menu, ose katalogë — gati për publikim.', href: '/growth/products',   color: 'text-teal-500',    bg: 'bg-teal-50',    grad: 'from-teal-400 to-cyan-500',      cta: 'Shkruaj Përshkrimin', isNew: true },
 ]
 
 export default function GrowthPage() {
@@ -32,17 +34,20 @@ export default function GrowthPage() {
             <p className="text-emerald-100 text-sm mt-0.5">Diagnostikë, plan 90-ditor, financim dhe KPI</p>
           </div>
           <div className="ml-auto hidden sm:flex flex-col items-end gap-1">
-            <span className="text-3xl font-bold">4</span>
+            <span className="text-3xl font-bold">6</span>
             <span className="text-xs text-emerald-200">mjete aktive</span>
           </div>
         </div>
       </div>
 
       {/* Tool Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tools.map(t => (
           <Link key={t.href} to={t.href} className="group block">
             <div className="relative h-full bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-all hover:-translate-y-0.5 flex flex-col gap-4 overflow-hidden">
+              {t.isNew && (
+                <span className="absolute top-3.5 right-3.5 text-[10px] font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-0.5 rounded-full">RI</span>
+              )}
               <div className={`w-12 h-12 ${t.bg} rounded-xl flex items-center justify-center`}>
                 <t.icon className={`w-6 h-6 ${t.color}`}/>
               </div>

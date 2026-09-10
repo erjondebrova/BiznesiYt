@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import {
   BarChart3, TrendingUp, Scale, Rocket, Briefcase, MessageSquare,
-  Calendar, AlertCircle, CheckCircle, Clock, ArrowRight, Target
+  Calendar, AlertCircle, CheckCircle, Clock, ArrowRight, Target, Sparkles
 } from 'lucide-react'
 
 function generateUpcomingDeadlines() {
@@ -130,6 +130,30 @@ export default function RaportePage() {
             <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
+      </div>
+
+      {/* AI Performance Report Tool */}
+      <div className="card mb-4 border border-slate-200 bg-gradient-to-br from-slate-50 to-white">
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles className="w-4 h-4 text-slate-500" />
+          <h2 className="font-heading font-semibold text-gray-800">Mjete AI</h2>
+        </div>
+        <Link to="/raporte/performance" className="group block">
+          <div className="relative flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-slate-400 hover:shadow-sm transition-all bg-white overflow-hidden">
+            <div className="w-11 h-11 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <BarChart3 className="w-5 h-5 text-slate-600"/>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-heading font-semibold text-gray-900">Raport Performance Marketingu</h3>
+                <span className="text-[10px] font-bold bg-gradient-to-r from-slate-600 to-slate-800 text-white px-2 py-0.5 rounded-full flex-shrink-0">RI</span>
+              </div>
+              <p className="text-sm text-gray-500 mt-0.5">Fut numrat — merr analizë me rekomandime konkrete për periudhën tjetër.</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0 mt-1 transition-transform group-hover:translate-x-0.5"/>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-slate-400 to-slate-600 opacity-0 group-hover:opacity-100 transition-opacity"/>
+          </div>
+        </Link>
       </div>
 
       {/* Module Access Grid */}

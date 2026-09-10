@@ -214,7 +214,7 @@ Fol shqip, ji shumë specifik dhe real — jo gjenerik. Bazoju te konteksti shqi
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [{ role: 'user', content: prompt }],
-          systemPrompt: 'Ti je ekspert i psikologjisë së konsumatorit dhe marketingut për tregun shqiptar. Krijo persona reale, specifike dhe të zbatueshme. Fol shqip gjithmonë.',
+          systemPrompt: 'Ti je një ekspert i strategjisë së marketingut, i specializuar për biznese të vogla dhe të mesme shqiptare. Krijo profil të detajuar të klientit ideal (buyer persona) bazuar te informacioni i dhënë. Shkruaj në shqip, me gjuhë të thjeshtë dhe praktike. Bëje realist — mos idealizo, mos gjenralizo. Çdo pikë duhet të jetë e zbatueshme dhe specifike (jo "targetoje audiencën e duhur" por "posto në Instagram çdo ditë në orën 19:00 me video të shkurtra"). Persona duhet të jetë e bazuar te industria specifike, jo gjenerike. Nëse mungon informacion, bëj supozime realiste bazuar te tregu shqiptar. Respekto formatin e dhënë me seksionet: IDENTITETI, QËLLIMET DHE ASPIRATAT, PROBLEMET DHE FRIKA, SJELLJA ONLINE, PROCESI I BLERJES, MESAZHI QË I FLET, KU E GJEJMË.',
         }),
       })
       if (res.ok) {

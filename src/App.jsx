@@ -48,6 +48,9 @@ import FiscalCalendarPage from './pages/legal/FiscalCalendarPage'
 import NIPTGuidePage from './pages/legal/NIPTGuidePage'
 import EmploymentGuidePage from './pages/legal/EmploymentGuidePage'
 import GrowthPage from './pages/growth/GrowthPage'
+import PricingStrategyPage from './pages/growth/PricingStrategyPage'
+import ProductDescriptionPage from './pages/growth/ProductDescriptionPage'
+import PerformanceReportPage from './pages/raporte/PerformanceReportPage'
 import HRPage from './pages/hr/HRPage'
 import JobDescriptionPage from './pages/hr/JobDescriptionPage'
 import InterviewQuestionsPage from './pages/hr/InterviewQuestionsPage'
@@ -242,6 +245,21 @@ function AppRoutes() {
       <Route path="/growth/kpi" element={
         <ProtectedRoute>
           <Layout><KPIDashboardPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/pricing" element={
+        <ProtectedRoute>
+          <Layout><PricingStrategyPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/growth/products" element={
+        <ProtectedRoute>
+          <Layout><ProductDescriptionPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/raporte/performance" element={
+        <ProtectedRoute>
+          <Layout><PerformanceReportPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/hr" element={

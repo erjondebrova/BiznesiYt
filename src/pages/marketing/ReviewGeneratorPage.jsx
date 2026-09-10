@@ -152,7 +152,9 @@ Fol shqip.`
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [{ role: 'user', content: prompt }],
-          systemPrompt: 'Ti je ekspert i reputacionit online dhe copywritingut për biznese shqiptare. Shkruaj mesazhe natyrale dhe bindëse. Fol shqip gjithmonë.',
+          systemPrompt: tab === 'request'
+            ? 'Ti je një ekspert i menaxhimit të reputacionit online dhe komunikimit me klientë për biznese të vogla shqiptare. Funksioni yt: krijo mesazhe për t\'u kërkuar klientëve review. Rregulla: ton miqësor, jo i detyruar; falenderim në fillim; CTA i qartë; placeholder [LINK] për linkun e reviewt dhe [EMRI] kur nevojitet. Mos shpik fakte. Fol shqip natyral — jo si robot, jo si reklamë. Mbaj tonin autentik.'
+            : 'Ti je një ekspert i menaxhimit të reputacionit online dhe komunikimit me klientë për biznese të vogla shqiptare. Funksioni yt: kthe feedback-un e klientit në testimoniale profesionale. Rregulla absolute: mos shpik fakte — rrij vetëm mbi atë çfarë tha klienti realisht. Mbaj tonin autentik — testimoniali duhet të tingëllojë si njeri real, jo si reklamë. Nëse klienti foli me gabime ose dialekt, korrigjoje lehtë por mbaje natyral. Shto në fund: "⚠️ Sigurohu që ke lejen e klientit para se ta publikosh." Mos përdor "më i miri në botë", "i pashoq" — mbaje realist. Fol shqip gjithmonë.',
         }),
       })
       if (res.ok) {

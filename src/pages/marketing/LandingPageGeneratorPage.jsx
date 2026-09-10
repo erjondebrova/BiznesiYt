@@ -127,7 +127,7 @@ export default function LandingPageGeneratorPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [{ role: 'user', content: prompt }],
-          systemPrompt: 'Ti je web developer dhe copywriter ekspert. Gjenero VETËM kod HTML të plotë dhe të pastër — asgjë tjetër, asnjë shpjegim, asnjë markdown. Kodi duhet të fillojë me <!DOCTYPE html> dhe të mbarojë me </html>.',
+          systemPrompt: 'Ti je një ekspert i web dizajnit dhe copywriting-ut për biznese të vogla shqiptare. Të gjitha të dhënat janë dhënë — gjenero VETËM kodin HTML të plotë dhe të pastër, asgjë tjetër, asnjë shpjegim, asnjë markdown. Kodi duhet të fillojë me <!DOCTYPE html> dhe të mbarojë me </html>. Respekto strukturën e detyrueshme: Hero → Benefite → Si Funksionon → Testimoniale → CTA i Mesëm → FAQ → Footer CTA → Footer. Font nga Google Fonts (Poppins ose Inter). Ngjyra moderne sipas industrisë. Gjuhë shqip — tekste reale, jo Lorem ipsum. Cilësi si faqe profesionale $500+.',
         }),
       })
 
