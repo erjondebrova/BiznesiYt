@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Badge } from '../components/ui/badge'
 import {
   Settings, User, Building2, Shield, Check, AlertCircle,
-  Lock, Mail, Trash2, Camera, Sun, Moon, Monitor,
+  Lock, Mail, Trash2, Camera,
   Download, ChevronDown, ChevronUp, Eye, EyeOff
 } from 'lucide-react'
 
@@ -53,22 +53,6 @@ function StatusMsg({ type, msg }) {
   )
 }
 
-function applyTheme(theme) {
-  const root = document.documentElement
-  if (theme === 'dark') {
-    root.classList.add('dark')
-  } else if (theme === 'light') {
-    root.classList.remove('dark')
-  } else {
-    // system
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      root.classList.add('dark')
-    } else {
-      root.classList.remove('dark')
-    }
-  }
-  localStorage.setItem('theme', theme)
-}
 
 export default function SettingsPage() {
   const { profile, user, refreshProfile, signOut } = useAuth()
@@ -109,8 +93,6 @@ export default function SettingsPage() {
   const [emailSaving, setEmailSaving] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
 
-  // Theme
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || profile?.theme_preference || 'system')
 
   // Delete account
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -130,8 +112,6 @@ export default function SettingsPage() {
         biggest_challenge: profile.biggest_challenge || '',
       })
       setAvatarUrl(profile.avatar_url || '')
-      const savedTheme = localStorage.getItem('theme') || profile.theme_preference || 'system'
-      setTheme(savedTheme)
     }
   }, [profile])
 
@@ -218,11 +198,6 @@ export default function SettingsPage() {
     }
   }
 
-  async function handleThemeChange(val) {
-    setTheme(val)
-    applyTheme(val)
-    await supabase.from('users_profile').update({ theme_preference: val }).eq('id', user.id)
-  }
 
   function exportData() {
     const data = {
@@ -475,31 +450,6 @@ export default function SettingsPage() {
         </div>
       </SectionCard>
 
-      {/* Theme */}
-      <SectionCard icon={Sun} iconColor="text-amber-500" iconBg="bg-amber-50" title="Tema & Pamja">
-        <p className="text-sm text-gray-500 -mt-2">Zgjidh si do të duket aplikacioni.</p>
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { val: 'system', icon: Monitor, label: 'Sistemi' },
-            { val: 'light', icon: Sun, label: 'E Çelët' },
-            { val: 'dark', icon: Moon, label: 'E Errët' },
-          ].map(({ val, icon: Icon, label }) => (
-            <button
-              key={val}
-              onClick={() => handleThemeChange(val)}
-              className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
-                theme === val
-                  ? 'border-primary-500 bg-primary-50 text-primary-700'
-                  : 'border-gray-100 bg-gray-50 text-gray-500 hover:border-gray-200'
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-xs font-medium">{label}</span>
-              {theme === val && <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />}
-            </button>
-          ))}
-        </div>
-      </SectionCard>
 
       {/* Privacy & GDPR */}
       <SectionCard icon={Shield} iconColor="text-slate-500" iconBg="bg-slate-100" title="Privatësia & GDPR">
