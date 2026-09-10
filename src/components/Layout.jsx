@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import {
   LayoutDashboard, MessageSquare, TrendingUp, BarChart3, Scale,
-  Rocket, Settings, LogOut, Zap, Menu, Bell, BarChart2, Briefcase
+  Rocket, Settings, LogOut, Zap, Menu, Bell, BarChart2, Briefcase,
+  Users, Package
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 
@@ -14,10 +15,13 @@ const MAIN_NAV = [
 
 const MODULE_NAV = [
   { icon: TrendingUp, label: 'Marketing',        href: '/marketing', dot: 'bg-orange-400',  activeBg: 'bg-orange-50',   activeText: 'text-orange-700',  activeIcon: 'text-orange-500'  },
+  { icon: Users,      label: 'Shitje & Klientë', href: '/sales',     dot: 'bg-rose-400',    activeBg: 'bg-rose-50',     activeText: 'text-rose-700',    activeIcon: 'text-rose-500'    },
+  { icon: Package,    label: 'Produktet & Inventari', href: '/inventory', dot: 'bg-cyan-400', activeBg: 'bg-cyan-50',  activeText: 'text-cyan-700',    activeIcon: 'text-cyan-500'    },
   { icon: BarChart3,  label: 'Financiar',        href: '/financial', dot: 'bg-blue-400',    activeBg: 'bg-blue-50',     activeText: 'text-blue-700',    activeIcon: 'text-blue-500'    },
   { icon: Scale,      label: 'Ligjore & Fiskal', href: '/legal',     dot: 'bg-purple-400',  activeBg: 'bg-purple-50',   activeText: 'text-purple-700',  activeIcon: 'text-purple-500'  },
   { icon: Rocket,     label: 'Rritje',           href: '/growth',    dot: 'bg-emerald-400', activeBg: 'bg-emerald-50',  activeText: 'text-emerald-700', activeIcon: 'text-emerald-500' },
   { icon: Briefcase,  label: 'HR & Ekipi',       href: '/hr',        dot: 'bg-teal-400',    activeBg: 'bg-teal-50',     activeText: 'text-teal-700',    activeIcon: 'text-teal-500'    },
+  { icon: Zap,        label: 'AI Automatizime',  href: '/automation',dot: 'bg-fuchsia-400', activeBg: 'bg-fuchsia-50',  activeText: 'text-fuchsia-700', activeIcon: 'text-fuchsia-500' },
   { icon: BarChart2,  label: 'Raporte',          href: '/raporte',   dot: 'bg-slate-400',   activeBg: 'bg-slate-100',   activeText: 'text-slate-700',   activeIcon: 'text-slate-500'   },
 ]
 

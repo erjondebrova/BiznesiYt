@@ -51,6 +51,23 @@ import GrowthPage from './pages/growth/GrowthPage'
 import PricingStrategyPage from './pages/growth/PricingStrategyPage'
 import ProductDescriptionPage from './pages/growth/ProductDescriptionPage'
 import PerformanceReportPage from './pages/raporte/PerformanceReportPage'
+import SalesPage from './pages/sales/SalesPage'
+import AddClientPage from './pages/sales/AddClientPage'
+import ClientsListPage from './pages/sales/ClientsListPage'
+import PipelinePage from './pages/sales/PipelinePage'
+import FollowUpPage from './pages/sales/FollowUpPage'
+import ClientAnalysisPage from './pages/sales/ClientAnalysisPage'
+import InventoryPage from './pages/inventory/InventoryPage'
+import AddProductPage from './pages/inventory/AddProductPage'
+import StockPage from './pages/inventory/StockPage'
+import PriceListPage from './pages/inventory/PriceListPage'
+import ProductAnalysisPage from './pages/inventory/ProductAnalysisPage'
+import AutomationPage from './pages/automation/AutomationPage'
+import WelcomeMessagePage from './pages/automation/WelcomeMessagePage'
+import WinBackPage from './pages/automation/WinBackPage'
+import WeeklyReportPage from './pages/automation/WeeklyReportPage'
+import RemindersPage from './pages/automation/RemindersPage'
+import PostPlannerPage from './pages/automation/PostPlannerPage'
 import HRPage from './pages/hr/HRPage'
 import JobDescriptionPage from './pages/hr/JobDescriptionPage'
 import InterviewQuestionsPage from './pages/hr/InterviewQuestionsPage'
@@ -260,6 +277,91 @@ function AppRoutes() {
       <Route path="/raporte/performance" element={
         <ProtectedRoute>
           <Layout><PerformanceReportPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/sales" element={
+        <ProtectedRoute>
+          <Layout><SalesPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/sales/clients/new" element={
+        <ProtectedRoute>
+          <Layout><AddClientPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/sales/clients" element={
+        <ProtectedRoute>
+          <Layout><ClientsListPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/sales/pipeline" element={
+        <ProtectedRoute>
+          <Layout><PipelinePage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/sales/followup" element={
+        <ProtectedRoute>
+          <Layout><FollowUpPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/sales/analysis" element={
+        <ProtectedRoute>
+          <Layout><ClientAnalysisPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/inventory" element={
+        <ProtectedRoute>
+          <Layout><InventoryPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/inventory/products/new" element={
+        <ProtectedRoute>
+          <Layout><AddProductPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/inventory/stock" element={
+        <ProtectedRoute>
+          <Layout><StockPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/inventory/pricelist" element={
+        <ProtectedRoute>
+          <Layout><PriceListPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/inventory/analysis" element={
+        <ProtectedRoute>
+          <Layout><ProductAnalysisPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/automation" element={
+        <ProtectedRoute>
+          <Layout><AutomationPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/automation/welcome" element={
+        <ProtectedRoute>
+          <Layout><WelcomeMessagePage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/automation/winback" element={
+        <ProtectedRoute>
+          <Layout><WinBackPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/automation/report" element={
+        <ProtectedRoute>
+          <Layout><WeeklyReportPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/automation/reminders" element={
+        <ProtectedRoute>
+          <Layout><RemindersPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/automation/posts" element={
+        <ProtectedRoute>
+          <Layout><PostPlannerPage /></Layout>
         </ProtectedRoute>
       } />
       <Route path="/hr" element={
